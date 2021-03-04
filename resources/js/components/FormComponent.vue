@@ -157,7 +157,7 @@ export default {
         
       axios.post('/file/store', data)
         .then( response => {
-            window.location = 'http://localhost:8000/home';
+            window.location = 'http://localhost:8000/files';
         }).catch( error => {
             console.log(error);
         })

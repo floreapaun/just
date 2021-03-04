@@ -24,7 +24,9 @@ class FileController extends Controller
 
     public function index()
     {
-        return File::orderBy('date_registered', 'DESC')->get();
+        return view('files.index')
+	       ->withFiles(File::orderBy('date_registered', 'DESC')
+               ->get());
     }
 
     /**

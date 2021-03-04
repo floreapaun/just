@@ -24,6 +24,7 @@ files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(
 */
 
 Vue.component('form-component', require('./components/FormComponent.vue').default);
+Vue.component('files-table-component', require('./components/FilesTableComponent.vue').default);
 Vue.component('datepicker-component', Datepicker);
 
 /**
