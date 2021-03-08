@@ -2370,6 +2370,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -2377,13 +2382,7 @@ __webpack_require__.r(__webpack_exports__);
       pickerdate: new Date(),
       court: {},
       crime: '',
-      parts: [{
-        name: "Marius Calmeu",
-        type: "Inculpat"
-      }, {
-        name: "Anton Man",
-        type: "Parte vatamata"
-      }],
+      parts: [],
       ro: vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_0__.ro
     };
   },
@@ -2393,6 +2392,10 @@ __webpack_require__.r(__webpack_exports__);
         name: '',
         type: ''
       });
+    },
+    deletePart: function deletePart(index) {
+      console.log(index);
+      this.parts.splice(index, 1);
     },
     getCourt: function getCourt() {
       var _this = this;
@@ -39803,7 +39806,7 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "form-group col-md-6" }, [
+            _c("div", { staticClass: "form-group col-md-5" }, [
               _c("label", [_vm._v("Calitate parte")]),
               _vm._v(" "),
               _c(
@@ -39848,7 +39851,31 @@ var render = function() {
                   _c("option", [_vm._v("Parte responsabila civilmente")])
                 ]
               )
-            ])
+            ]),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "form-group col-md-1 text-center my-auto" },
+              [
+                _c(
+                  "a",
+                  {
+                    attrs: { href: "#" },
+                    on: {
+                      click: function($event) {
+                        return _vm.deletePart(index)
+                      }
+                    }
+                  },
+                  [
+                    _c("i", {
+                      staticClass: "bi-file-x",
+                      staticStyle: { "font-size": "3rem", color: "red" }
+                    })
+                  ]
+                )
+              ]
+            )
           ])
         }),
         0
