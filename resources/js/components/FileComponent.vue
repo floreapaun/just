@@ -358,7 +358,7 @@ export default {
             window.location = 'http://localhost:8000/files';
         }).catch( error => {
             console.log(error);
-        })
+        });
     }
   },
 
