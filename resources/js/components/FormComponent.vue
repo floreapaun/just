@@ -57,7 +57,7 @@
             <label>Nume</label>
             <input v-model="part.name" :name="`parts[${index}][name]`" type="text" class="form-control" placeholder="Nume">
           </div>
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-5">
             <label>Calitate parte</label>
             <select v-model="part.type" class="form-control">
               <option>Inculpat</option> 
@@ -65,6 +65,11 @@
               <option>Parte vatamata</option> 
               <option>Parte responsabila civilmente</option> 
             </select>
+          </div>
+          <div class="form-group col-md-1 text-center my-auto">
+	    <a href="#" @click="deletePart(index)">
+	      <i class="bi-file-x" style="font-size: 3rem; color: red;"></i>
+	    </a>
           </div>
         </div>
       </div>
@@ -115,16 +120,7 @@ export default {
       pickerdate: new Date(),
       court: {},
       crime: '',
-      parts: [
-        {
-          name: "Marius Calmeu",
-          type: "Inculpat"
-        },
-        {
-          name: "Anton Man",
-          type: "Parte vatamata"
-        }
-      ],
+      parts: [],
       ro: ro
     }
   },
@@ -135,6 +131,11 @@ export default {
         name: '',
         type: ''
       })
+    },
+    
+    deletePart (index) {
+      console.log(index);
+      this.parts.splice(index, 1);
     },
 
     getCourt () {
