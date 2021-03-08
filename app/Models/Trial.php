@@ -15,6 +15,9 @@ class Trial extends Model
         'court_id',
         'file_id',
         'status_id',
+	'type',
+	'document',
+	'solution',
         'date',
    ];
 }

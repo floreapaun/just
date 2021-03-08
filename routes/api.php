@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\TrialController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +19,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/file/data', [FileController::class, 'data']);
+Route::post('/file/parts', [FileController::class, 'parts']);
+Route::post('/file/court', [FileController::class, 'court']);
+Route::post('/file/trials', [FileController::class, 'trials']);
+Route::post('/trial/update', [TrialController::class, 'update']);
 
 
 
