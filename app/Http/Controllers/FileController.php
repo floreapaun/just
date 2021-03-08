@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\File;
 use App\Models\Part;
-use App\Models\Status;
 use App\Models\Trial;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,6 +38,26 @@ class FileController extends Controller
         //
     }
 
+    public function data(Request $request)
+    {
+       return File::where('id', $request->id)->get();
+    }
+
+    public function parts(Request $request)
+    {
+       return File::find($request->id)->parts;
+    }
+
+    public function court(Request $request)
+    {
+       return File::find($request->id)->court;
+    }
+
+    public function trials(Request $request)
+    {
+       return Trial::where('file_id', $request->file_id)->get();
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -47,8 +66,6 @@ class FileController extends Controller
      */
     public function store(Request $request)
     {
-        
-        //var_dump(date('Y-m-d', strtotime($request->date)));
 
         $newFile = new File;
         $newFile->user_id = Auth::id();
@@ -56,7 +73,6 @@ class FileController extends Controller
         $newFile->crime = $request->crime;
         $newFile->date_registered = date('Y-m-d', strtotime($request->date));
         $newFile->save();
-
         
         foreach($request->parts as $part)
         {
@@ -68,15 +84,10 @@ class FileController extends Controller
 
         }
         
-        $newStatus = new Status;
-        $newStatus->type = 'waiting';
-        $newStatus->save();
-
-        
         $newTrial = new Trial;
         $newTrial->court_id = $request->court_id;
         $newTrial->file_id = $newFile->id;
-        $newTrial->status_id = $newStatus->id;
+        $newTrial->type = "waiting";
         $newTrial->date = date('Y-m-d', strtotime($request->date));
         $newTrial->save();
         

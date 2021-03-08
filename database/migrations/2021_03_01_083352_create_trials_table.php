@@ -19,8 +19,9 @@ class CreateTrialsTable extends Migration
             $table->foreign('court_id')->references('id')->on('courts');
             $table->bigInteger('file_id')->unsigned();
             $table->foreign('file_id')->references('id')->on('files');
-            $table->bigInteger('status_id')->unsigned();
-            $table->foreign('status_id')->references('id')->on('statuses');
+            $table->string('type');
+            $table->string('document')->nullable();
+            $table->string('solution')->nullable();
             $table->date('date'); 
         });
     }
