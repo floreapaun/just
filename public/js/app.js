@@ -2234,15 +2234,52 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['propsFiles'],
+  data: function data() {
+    return {
+      files: []
+    };
+  },
   methods: {
     getYear: function getYear(fulldate) {
       var parts = fulldate.split('-');
       return parts[0];
+    },
+    changeFormat: function changeFormat(fulldate) {
+      var d = new Date(fulldate),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+      return [day, month, year].join('/');
+    },
+    search: function search(event) {
+      var _this = this;
+
+      console.log(event.target.value);
+      axios.post('/api/file/search', {
+        term: event.target.value
+      }).then(function (response) {
+        console.log(response.data);
+        _this.files = response.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   },
   mounted: function mounted() {
+    this.files = this.propsFiles;
     console.log(this.propsFiles);
   }
 });
@@ -6999,7 +7036,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n#files {\r\n  font-family: Arial, Helvetica, sans-serif;\r\n  border-collapse: collapse;\r\n  width: 100%;\n}\n#files td, #files th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\n}\n#files tr:nth-child(even){background-color: #f2f2f2;}\n#files tr:hover {background-color: #ddd;}\n#files th {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #4CAF50;\r\n  color: white;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.search {\r\n  width: 40%;\r\n  margin: 30px auto;\n}\n#files {\r\n  font-family: Arial, Helvetica, sans-serif;\r\n  border-collapse: collapse;\r\n  width: 100%;\n}\n#files td, #files th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\n}\n#files tr:nth-child(even){background-color: #f2f2f2;}\n#files tr:hover {background-color: #ddd;}\n#files th {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #4CAF50;\r\n  color: white;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -39595,13 +39632,30 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
+    _c("div", { staticClass: "search input-group" }, [
+      _c("input", {
+        staticClass: "form-control",
+        attrs: {
+          type: "text",
+          placeholder: "Cauta dupa numar dosar, obiect sau parte"
+        },
+        on: {
+          change: function(event) {
+            return _vm.search(event)
+          }
+        }
+      }),
+      _vm._v(" "),
+      _vm._m(0)
+    ]),
+    _vm._v(" "),
     _c(
       "table",
       { attrs: { id: "files" } },
       [
-        _vm._m(0),
+        _vm._m(1),
         _vm._v(" "),
-        _vm._l(_vm.propsFiles, function(file) {
+        _vm._l(_vm.files, function(file) {
           return _c("tr", [
             _c("td", [
               _c("a", { attrs: { href: "file/" + file.id } }, [
@@ -39613,7 +39667,7 @@ var render = function() {
               ])
             ]),
             _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(file.date_registered))]),
+            _c("td", [_vm._v(_vm._s(_vm.changeFormat(file.date_registered)))]),
             _vm._v(" "),
             _c("td", [_vm._v(_vm._s(file.crime))]),
             _vm._v(" "),
@@ -39632,10 +39686,25 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-append" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-secondary",
+          attrs: { type: "button", disabled: "" }
+        },
+        [_c("i", { staticClass: "bi bi-search" })]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("tr", [
       _c("th", [_vm._v("Numar")]),
       _vm._v(" "),
-      _c("th", [_vm._v("Data")]),
+      _c("th", [_vm._v("Data inregistrarii")]),
       _vm._v(" "),
       _c("th", [_vm._v("Obiect")]),
       _vm._v(" "),

@@ -16,6 +16,43 @@ class FileController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function search(Request $request) 
+    {
+	$files = array();
+
+	//search by number
+	$pieces_term = explode("/", $request->term);
+	if (count($pieces_term) === 3) 
+	{
+	    $file = File::find($pieces_term[0]);
+	    if ($file)
+		$date_pieces = explode("-", $file->date_registered);
+		if ($pieces_term[2] === $date_pieces[0])
+		{
+		    array_push($files, $file);
+		    return $files;
+		}
+	}
+	    
+	//search by part name
+	$parts = Part::where('name', 'like', '%' . $request->term . '%')->get();
+	if ($parts->isNotEmpty())
+	{
+	    foreach ($parts as $part)
+		if (!in_array($part->file, $files))
+		    array_push($files, $part->file);
+	  return $files;
+	}
+
+	//search by crime 
+	$crime_files = File::where('crime', 'like', '%' . $request->term . '%')->get();
+	if ($crime_files->isNotEmpty())
+	  return $crime_files;
+	
+	return false;  
+    }  
+
+
     public function index()
     {
         return view('files.index')
