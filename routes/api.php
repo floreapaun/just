@@ -26,6 +26,7 @@ Route::post('/file/court', [FileController::class, 'court']);
 Route::post('/file/trials', [FileController::class, 'trials']);
 Route::post('/trial/update', [TrialController::class, 'update']);
 Route::post('/file/search', [FileController::class, 'search']);
+Route::post('/trials/courts', [TrialController::class, 'courts']);
 
 
 
