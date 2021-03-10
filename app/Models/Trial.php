@@ -14,10 +14,14 @@ class Trial extends Model
     protected $fillable = [
         'court_id',
         'file_id',
-        'status_id',
 	'type',
 	'document',
 	'solution',
         'date',
    ];
+
+  public function file()
+  {
+      return $this->belongsTo(File::class);
+  }
 }
