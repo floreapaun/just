@@ -198,6 +198,15 @@
 		</select>
 	      </div>
 	    </div>
+            <div v-if="type_update === 'Rejudecare'" class="form-row">
+	      <div class="form-group col-md-2">
+		<label>Data rejudecarii</label>
+	      </div>
+	      <div class="form-group col-md-5">
+		<datepicker-component v-model="newtrial_date" :language='ro'>
+		</datepicker-component>
+	      </div>
+	    </div>
             <div class="form-row">
 	      <div class="form-group col-md-2">
 		<label>Tip solutie</label>
@@ -263,6 +272,7 @@ export default {
       solution: '',
       doc: '',
       pickerdate: new Date(),
+      newtrial_date: new Date(),
       court: {},
       crime: '',
       parts: [],
@@ -330,6 +340,7 @@ export default {
       let data = {
 	id: trial_id,
 	type: (this.type_update === 'Rejudecare') ? 'continued' : 'ended',
+	newtrial_date: this.newtrial_date,
 	document: this.doc,
 	solution: this.solution 
       };
@@ -337,6 +348,7 @@ export default {
       axios.post('/api/trial/update', data)
         .then( response => {
 	  this.trials = response.data;
+	  this.update_type = '';
         })
 	.catch( error => {
 	  console.log(error);

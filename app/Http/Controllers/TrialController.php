@@ -39,7 +39,7 @@ class TrialController extends Controller
 	    $newTrial->court_id = $trial->court_id;
 	    $newTrial->file_id = $trial->file_id;
 	    $newTrial->type = 'waiting';
-	    $newTrial->date = (new DateTime(mt_rand(2021, 2030) . '-' . mt_rand(1, 12) . '-' . mt_rand(1, 31)))->format('Y-m-d');
+	    $newTrial->date = date('Y-m-d', strtotime($request->newtrial_date));
 	    $newTrial->save();
         }
 	

@@ -57,7 +57,7 @@
       <div class="form-row">
         <div class="col-md-12 text-center">
           <div class="form-group">
-            <button @click="removeFiles()" type="button" class="btn btn-primary">Inapoi</button>
+            <button @click="removeFiles()" type="button" class="btn btn-primary btn-back">Inapoi</button>
           </div>
         </div>
       </div>
@@ -159,7 +159,8 @@ table th {
   color: white;
 }
 
-button {
+.btn-back {
   margin: 10px;
 }
+
 </style>

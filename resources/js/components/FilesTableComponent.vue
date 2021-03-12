@@ -2,7 +2,7 @@
   <div class="container">
     <div class="search input-group">
       <input type="text" class="form-control" placeholder="Cauta dupa numar dosar, obiect sau parte" 
-        v-on:change="event => search(event)">
+	v-on:change="event => search(event)">
       <div class="input-group-append">
 	<button class="btn btn-secondary" type="button" disabled>
 	  <i class="bi bi-search"></i>
@@ -79,28 +79,5 @@ export default {
 .search {
   width: 40%;
   margin: 30px auto;
-}
-
-#files {
-  font-family: Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-#files td, #files th {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-#files tr:nth-child(even){background-color: #f2f2f2;}
-
-#files tr:hover {background-color: #ddd;}
-
-#files th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #4CAF50;
-  color: white;
 }
 </style>

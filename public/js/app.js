@@ -2239,6 +2239,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['propsFileid'],
@@ -2249,6 +2258,7 @@ __webpack_require__.r(__webpack_exports__);
       solution: '',
       doc: '',
       pickerdate: new Date(),
+      newtrial_date: new Date(),
       court: {},
       crime: '',
       parts: [],
@@ -2311,11 +2321,13 @@ __webpack_require__.r(__webpack_exports__);
       var data = {
         id: trial_id,
         type: this.type_update === 'Rejudecare' ? 'continued' : 'ended',
+        newtrial_date: this.newtrial_date,
         document: this.doc,
         solution: this.solution
       };
       axios.post('/api/trial/update', data).then(function (response) {
         _this3.trials = response.data;
+        _this3.update_type = '';
       })["catch"](function (error) {
         console.log(error);
       });
@@ -7153,7 +7165,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\ntable {\r\n  font-family: Arial, Helvetica, sans-serif;\r\n  border-collapse: collapse;\r\n  width: 100%;\n}\ntable td, table th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\n}\ntable tr:nth-child(even){background-color: #f2f2f2;}\ntable tr:hover {background-color: #ddd;}\ntable th {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #4CAF50;\r\n  color: white;\n}\nbutton {\r\n  margin: 10px;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\ntable {\r\n  font-family: Arial, Helvetica, sans-serif;\r\n  border-collapse: collapse;\r\n  width: 100%;\n}\ntable td, table th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\n}\ntable tr:nth-child(even){background-color: #f2f2f2;}\ntable tr:hover {background-color: #ddd;}\ntable th {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #4CAF50;\r\n  color: white;\n}\n.btn-back {\r\n  margin: 10px;\n}\r\n\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -7201,7 +7213,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.search {\r\n  width: 40%;\r\n  margin: 30px auto;\n}\n#files {\r\n  font-family: Arial, Helvetica, sans-serif;\r\n  border-collapse: collapse;\r\n  width: 100%;\n}\n#files td, #files th {\r\n  border: 1px solid #ddd;\r\n  padding: 8px;\n}\n#files tr:nth-child(even){background-color: #f2f2f2;}\n#files tr:hover {background-color: #ddd;}\n#files th {\r\n  padding-top: 12px;\r\n  padding-bottom: 12px;\r\n  text-align: left;\r\n  background-color: #4CAF50;\r\n  color: white;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.search {\r\n  width: 40%;\r\n  margin: 30px auto;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -39114,7 +39126,7 @@ var render = function() {
                 _c(
                   "button",
                   {
-                    staticClass: "btn btn-primary",
+                    staticClass: "btn btn-primary btn-back",
                     attrs: { type: "button" },
                     on: {
                       click: function($event) {
@@ -39753,8 +39765,32 @@ var render = function() {
                     ])
                   ]),
                   _vm._v(" "),
+                  _vm.type_update === "Rejudecare"
+                    ? _c("div", { staticClass: "form-row" }, [
+                        _vm._m(17, true),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "form-group col-md-5" },
+                          [
+                            _c("datepicker-component", {
+                              attrs: { language: _vm.ro },
+                              model: {
+                                value: _vm.newtrial_date,
+                                callback: function($$v) {
+                                  _vm.newtrial_date = $$v
+                                },
+                                expression: "newtrial_date"
+                              }
+                            })
+                          ],
+                          1
+                        )
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(17, true),
+                    _vm._m(18, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -39782,7 +39818,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(18, true),
+                    _vm._m(19, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -39832,7 +39868,7 @@ var render = function() {
             trial.type === "waiting" && !_vm.timePassed(trial.date)
               ? _c("div", [
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(19, true),
+                    _vm._m(20, true),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -39854,7 +39890,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(20, true),
+                    _vm._m(21, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -40062,6 +40098,14 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group col-md-2" }, [
       _c("label", [_vm._v("Solutie")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group col-md-2" }, [
+      _c("label", [_vm._v("Data rejudecarii")])
     ])
   },
   function() {
