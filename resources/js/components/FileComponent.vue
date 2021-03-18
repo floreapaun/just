@@ -98,7 +98,7 @@
                 <label>Solutie</label>
               </div>
               <div class="form-group col-md-5">
-                <input type="text" value="Rejudecare" class="form-control" disabled>
+                <input type="text" value="Amanare cauza" class="form-control" disabled>
               </div>
             </div>
             <div class="form-row">
@@ -141,7 +141,7 @@
                 <label>Solutie</label>
               </div>
               <div class="form-group col-md-5">
-                <input type="text" value="Incheiere" class="form-control" disabled>
+                <input type="text" value="Hotarare" class="form-control" disabled>
               </div>
             </div>
             <div class="form-row">
@@ -184,21 +184,37 @@
                 <label>Solutie</label>
               </div>
               <div class="form-group col-md-5">
-                <select v-model="type_update">
-                  <option>Rejudecare</option>
-                  <option>Incheiere</option>
+                <select v-model="type_update" @change="onChange(trial.court)">
+                  <option>Amana cauza</option>
+                  <option>Hotarare</option>
                 </select>
               </div>
             </div>
-            <div v-if="type_update === 'Rejudecare'" class="form-row">
-              <div class="form-group col-md-2">
-                <label>Data rejudecarii</label>
+
+            <div v-if="type_update === 'Amana cauza'">
+              <div class="form-row">
+                <div class="form-group col-md-2">
+                  <label>Data rejudecarii</label>
+                </div>
+                <div class="form-group col-md-5">
+                  <datepicker-component v-model="newtrial_date" :language='ro'>
+                  </datepicker-component>
+                </div>
               </div>
-              <div class="form-group col-md-5">
-                <datepicker-component v-model="newtrial_date" :language='ro'>
-                </datepicker-component>
+              <div class="form-row">
+                <div class="form-group col-md-2">
+                  <label>Complet</label>
+                </div>
+                <div class="form-group col-md-5">
+                  <input type="text" v-model="nextCourt.name" class="form-control">
+                </div>
+                <div class="form-group col-md-2">
+                  <button :disabled="newCourtIsClicked" 
+                    @click="newCourt()" type="button" class="btn btn-secondary">Refuza</button>
+                </div>
               </div>
             </div>
+
             <div class="form-row">
               <div class="form-group col-md-2">
                 <label>Tip solutie</label>
@@ -260,6 +276,8 @@ export default {
       doc: "",
       pickerdate: new Date(),
       newtrial_date: new Date(),
+      nextCourt: {},
+      newCourtIsClicked: false,
       courts: [],
       crime: "",
       parts: [],
@@ -306,10 +324,28 @@ export default {
       return false;
     },
 
+    onChange (court) {
+        this.nextCourt = court;
+    },
+
+    newCourt () {
+      axios
+        .post("/api/court/new", { court_id: this.nextCourt.id })
+        .then((response) => {
+          console.log(response.data);
+          this.nextCourt = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      this.newCourtIsClicked = true;
+    },
+
     updateTrials(trial_id) {
       let data = {
         id: trial_id,
-        type: this.type_update === "Rejudecare" ? "continued" : "ended",
+        court_id: this.nextCourt.id,
+        type: this.type_update === "Amana cauza" ? "continued" : "ended",
         newtrial_date: this.newtrial_date,
         document: this.doc,
         solution: this.solution,
@@ -319,7 +355,11 @@ export default {
         .post("/api/trial/update", data)
         .then((response) => {
           this.trials = response.data;
-          this.update_type = "";
+
+          this.type_update = "";
+          this.doc = '';
+          this.solution = '';
+          this.newCourtIsClicked = false;
         })
         .catch((error) => {
           console.log(error);
@@ -344,5 +384,3 @@ export default {
   border-bottom: 1px solid rgb(206, 212, 218);
 }
 </style>
-
-
