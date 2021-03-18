@@ -11,6 +11,10 @@ class Court extends Model
    
     public $timestamps = false;
 
+    protected $fillable = [
+        'active',
+    ];
+
     public function files()
     {
         return $this->hasMany(File::class);

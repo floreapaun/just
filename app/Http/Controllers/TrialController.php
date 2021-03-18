@@ -12,17 +12,17 @@ class TrialController extends Controller
 
     public function courts(Request $request)
     {
-	$courts = Court::all();
-	foreach($courts as $court)
-	{
-	  $files_arr = array();
-	  $trials = Trial::where('type', '=', 'waiting')->where('date', '=', date('Y-m-d', strtotime($request->date)))
-		   ->where('court_id', '=', $court->id)->get();
-	  foreach($trials as $trial)
-	    array_push($files_arr, $trial->file);
-	  $court->files = $files_arr;
-	}
-	return $courts;
+        $courts = Court::where('active', true)->get();
+        foreach($courts as $court)
+        {
+          $files_arr = array();
+          $trials = Trial::where('type', '=', 'waiting')->where('date', '=', date('Y-m-d', strtotime($request->date)))
+               ->where('court_id', '=', $court->id)->get();
+          foreach($trials as $trial)
+            array_push($files_arr, $trial->file);
+          $court->files = $files_arr;
+        }
+        return $courts;
     }
 
     public function update(Request $request) 
@@ -43,7 +43,7 @@ class TrialController extends Controller
 	    $newTrial->save();
         }
 	
-        return Trial::where('file_id', $trial->file_id)->get();
+        return Trial::where('file_id', $trial->file_id)->with('court')->get();
     }
       
 }

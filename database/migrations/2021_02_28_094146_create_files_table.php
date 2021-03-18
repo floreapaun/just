@@ -17,8 +17,6 @@ class CreateFilesTable extends Migration
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->bigInteger('court_id')->unsigned();
-            $table->foreign('court_id')->references('id')->on('courts');
             $table->string('crime');
             $table->date('date_registered');
         });

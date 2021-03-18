@@ -13,7 +13,6 @@ class File extends Model
 
     protected $fillable = [
         'user_id',
-        'court_id',
         'crime',
         'date_registered',
     ];
@@ -27,10 +26,4 @@ class File extends Model
     {
         return $this->hasMany(Part::class);
     }
-
-    public function court()
-    {
-        return $this->belongsTo(Court::class); 
-    }
-
 }

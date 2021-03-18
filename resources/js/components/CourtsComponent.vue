@@ -18,12 +18,12 @@
     
       <table>
 	<tr>
-	  <th>Departament</th>
+	  <th>Sectie</th>
 	  <th>Complet</th>
 	  <th>Ora</th>
 	</tr>
 	<tr v-for="court in courts">
-	  <td>Sectia de contencios administrativ si penal</td>
+	  <td>Penal</td>
 	  <td><a href="#" @click="showFiles(court.id)">{{ court.name }}</a></td>
 	  <td>09:00</td>
 	</tr>
@@ -105,7 +105,11 @@ export default {
 
     showFiles(courtId) {
       this.showCourts = false;
-      this.files = this.courts[courtId - 1].files;
+      this.courts.forEach(court => { 
+        if (court.id === courtId) {
+          this.files = court.files;
+        }
+      });
     },
   
     removeFiles() {

@@ -6,7 +6,7 @@
             <label>Sectie</label>
           </div>
           <div class="form-group col-md-6">
-            <input type="text" class="form-control" placeholder="Sectia Civila">
+            <input type="text" class="form-control" placeholder="Sectia Penala" disabled>
           </div>
         </div>
 
@@ -15,7 +15,7 @@
             <label>Materie</label>
           </div>
           <div class="form-group col-md-6">
-            <input type="text" class="form-control" placeholder="Civil">
+            <input type="text" class="form-control" placeholder="Penal" disabled>
           </div>
         </div>
 
@@ -95,7 +95,7 @@
           <label>Complet judecata</label>
         </div>
         <div class="form-group col-md-5">
-          <input type="text" v-model="court.name" class="form-control">
+          <input type="text" v-model="court.name" class="form-control" disabled>
         </div>
       </div>
 

@@ -17,16 +17,10 @@ class CreateCourtsTable extends Migration
         Schema::create('courts', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('judge');
+            $table->boolean('active')->default(true);
         });
 
-        DB::table('courts')->insert([
-            ['name' => 'C1'],
-            ['name' => 'C2'],
-            ['name' => 'C3'],
-            ['name' => 'C4'],
-            ['name' => 'C5'],
-            ['name' => 'C6'],
-        ]);
     }
 
     /**

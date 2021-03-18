@@ -80,14 +80,9 @@ class FileController extends Controller
        return File::find($request->id)->parts;
     }
 
-    public function court(Request $request)
-    {
-       return File::find($request->id)->court;
-    }
-
     public function trials(Request $request)
     {
-       return Trial::where('file_id', $request->file_id)->get();
+       return Trial::where('file_id', $request->file_id)->with('court')->get();
     }
 
     /**
@@ -101,7 +96,6 @@ class FileController extends Controller
 
         $newFile = new File;
         $newFile->user_id = Auth::id();
-        $newFile->court_id = $request->court_id;
         $newFile->crime = $request->crime;
         $newFile->date_registered = date('Y-m-d', strtotime($request->date));
         $newFile->save();

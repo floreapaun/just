@@ -27,6 +27,9 @@ Route::get('/file/{id}', function($id) {
 Route::get('/courts', function () {
     return view('courts.index');
 })->name('courts'); 
+Route::get('/courts/panel', function () {
+    return view('courts.panel');
+})->name('courts_panel');
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/files', [FileController::class, 'index'])->name('files'); 

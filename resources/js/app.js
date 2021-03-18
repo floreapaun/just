@@ -27,6 +27,7 @@ Vue.component('form-component', require('./components/FormComponent.vue').defaul
 Vue.component('files-table-component', require('./components/FilesTableComponent.vue').default);
 Vue.component('file-component', require('./components/FileComponent.vue').default);
 Vue.component('courts-component', require('./components/CourtsComponent.vue').default);
+Vue.component('courts-panel-component', require('./components/CourtsPanelComponent.vue').default);
 Vue.component('datepicker-component', Datepicker);
 
 /**

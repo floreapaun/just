@@ -42,27 +42,33 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-			<li class="nav-item">
-			    <a class="nav-link" href="{{ url('/files') }}">
-				<img src="{{url('/images/law_small.png')}}" alt="Logo"/>
-				{{ config('app.name', 'Laravel') }}
-			    </a>
-			</li>
-                        <li class="nav-item {{ Request::routeIs('files') ? 'active' : '' }} {{ Request::routeIs('file') ? 'active' : ''}}">
-			    <a class="nav-link" href="{{ url('/files') }}">
-				Dosare
-			    </a>
-			</li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/files') }}">
+                                <img src="{{url('/images/law_small.png')}}" alt="Logo"/>
+                                {{ config('app.name', 'Laravel') }}
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::routeIs('files') ? 'active' : '' }} 
+                                            {{ Request::routeIs('file') ? 'active' : ''}}">
+                            <a class="nav-link" href="{{ url('/files') }}">
+                                Dosare
+                            </a>
+                        </li>
                         <li class="nav-item {{ Request::routeIs('courts') ? 'active' : '' }}">
-			    <a class="nav-link" href="{{ url('/courts') }}">
-				Sedinte
-			    </a>
-			</li>
+                            <a class="nav-link" href="{{ url('/courts') }}">
+                                Sedinte
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::routeIs('courts_panel') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('/courts/panel') }}">
+                                Complete
+                            </a>
+                        </li>
                         <li class="nav-item {{ Request::routeIs('file_store') ? 'active' : '' }}">
-			    <a class="nav-link" href="{{ url('/files/store') }}">
-				Adauga dosar
-			    </a>
-			</li>
+                            <a class="nav-link" href="{{ url('/files/store') }}">
+                                Adauga dosar
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
