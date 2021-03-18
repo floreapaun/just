@@ -35,4 +35,5 @@ Route::prefix('/court')->group(function() {
     Route::post('/store', [CourtController::class, 'store']);
     Route::post('/remove', [CourtController::class, 'destroy']);
     Route::post('/entry', [CourtController::class, 'entry']);
+    Route::post('/new', [CourtController::class, 'new']);
 });

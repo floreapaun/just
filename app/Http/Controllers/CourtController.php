@@ -19,6 +19,11 @@ class CourtController extends Controller
         return Court::where("active", true)->get();
     }
 
+    public function new(Request $request) 
+    {
+        return Court::where([["active", true], ["id", "!=", $request->court_id]])->inRandomOrder()->first(); 
+    }
+
     public function random()
     {
         return Court::where("active", true)->inRandomOrder()->first(); 

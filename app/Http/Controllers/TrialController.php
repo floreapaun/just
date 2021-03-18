@@ -27,23 +27,23 @@ class TrialController extends Controller
 
     public function update(Request $request) 
     {
-	$trial = Trial::find($request->id);
-	$trial->type = $request->type;
-	$trial->document = $request->document;
-	$trial->solution = $request->solution;
-	$trial->save();
+        $trial = Trial::find($request->id);
+        $trial->type = $request->type;
+        $trial->document = $request->document;
+        $trial->solution = $request->solution;
+        $trial->save();
 
-	if ($request->type === 'continued') 
-	{
-	    $newTrial = new Trial;
-	    $newTrial->court_id = $trial->court_id;
-	    $newTrial->file_id = $trial->file_id;
-	    $newTrial->type = 'waiting';
-	    $newTrial->date = date('Y-m-d', strtotime($request->newtrial_date));
-	    $newTrial->save();
+        if ($request->type === 'continued') 
+        {
+            $newTrial = new Trial;
+            $newTrial->file_id = $trial->file_id;
+            $newTrial->court_id = $request->court_id;
+            $newTrial->type = 'waiting';
+            $newTrial->date = date('Y-m-d', strtotime($request->newtrial_date));
+            $newTrial->save();
         }
-	
+        
         return Trial::where('file_id', $trial->file_id)->with('court')->get();
     }
-      
+    
 }

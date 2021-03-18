@@ -2426,6 +2426,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ["propsFileid"],
@@ -2437,6 +2453,8 @@ __webpack_require__.r(__webpack_exports__);
       doc: "",
       pickerdate: new Date(),
       newtrial_date: new Date(),
+      nextCourt: {},
+      newCourtIsClicked: false,
       courts: [],
       crime: "",
       parts: [],
@@ -2477,19 +2495,39 @@ __webpack_require__.r(__webpack_exports__);
       if (new Date().getTime() >= new Date(date).getTime()) return true;
       return false;
     },
-    updateTrials: function updateTrials(trial_id) {
+    onChange: function onChange(court) {
+      this.nextCourt = court;
+    },
+    newCourt: function newCourt() {
       var _this2 = this;
+
+      axios.post("/api/court/new", {
+        court_id: this.nextCourt.id
+      }).then(function (response) {
+        console.log(response.data);
+        _this2.nextCourt = response.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+      this.newCourtIsClicked = true;
+    },
+    updateTrials: function updateTrials(trial_id) {
+      var _this3 = this;
 
       var data = {
         id: trial_id,
-        type: this.type_update === "Rejudecare" ? "continued" : "ended",
+        court_id: this.nextCourt.id,
+        type: this.type_update === "Amana cauza" ? "continued" : "ended",
         newtrial_date: this.newtrial_date,
         document: this.doc,
         solution: this.solution
       };
       axios.post("/api/trial/update", data).then(function (response) {
-        _this2.trials = response.data;
-        _this2.update_type = "";
+        _this3.trials = response.data;
+        _this3.type_update = "";
+        _this3.doc = '';
+        _this3.solution = '';
+        _this3.newCourtIsClicked = false;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -41708,56 +41746,114 @@ var render = function() {
                             }
                           ],
                           on: {
-                            change: function($event) {
-                              var $$selectedVal = Array.prototype.filter
-                                .call($event.target.options, function(o) {
-                                  return o.selected
-                                })
-                                .map(function(o) {
-                                  var val = "_value" in o ? o._value : o.value
-                                  return val
-                                })
-                              _vm.type_update = $event.target.multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
-                            }
+                            change: [
+                              function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.type_update = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              },
+                              function($event) {
+                                return _vm.onChange(trial.court)
+                              }
+                            ]
                           }
                         },
                         [
-                          _c("option", [_vm._v("Rejudecare")]),
+                          _c("option", [_vm._v("Amana cauza")]),
                           _vm._v(" "),
-                          _c("option", [_vm._v("Incheiere")])
+                          _c("option", [_vm._v("Hotarare")])
                         ]
                       )
                     ])
                   ]),
                   _vm._v(" "),
-                  _vm.type_update === "Rejudecare"
-                    ? _c("div", { staticClass: "form-row" }, [
-                        _vm._m(17, true),
+                  _vm.type_update === "Amana cauza"
+                    ? _c("div", [
+                        _c("div", { staticClass: "form-row" }, [
+                          _vm._m(17, true),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "form-group col-md-5" },
+                            [
+                              _c("datepicker-component", {
+                                attrs: { language: _vm.ro },
+                                model: {
+                                  value: _vm.newtrial_date,
+                                  callback: function($$v) {
+                                    _vm.newtrial_date = $$v
+                                  },
+                                  expression: "newtrial_date"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ]),
                         _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "form-group col-md-5" },
-                          [
-                            _c("datepicker-component", {
-                              attrs: { language: _vm.ro },
-                              model: {
-                                value: _vm.newtrial_date,
-                                callback: function($$v) {
-                                  _vm.newtrial_date = $$v
-                                },
-                                expression: "newtrial_date"
+                        _c("div", { staticClass: "form-row" }, [
+                          _vm._m(18, true),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group col-md-5" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.nextCourt.name,
+                                  expression: "nextCourt.name"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: { type: "text" },
+                              domProps: { value: _vm.nextCourt.name },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(
+                                    _vm.nextCourt,
+                                    "name",
+                                    $event.target.value
+                                  )
+                                }
                               }
                             })
-                          ],
-                          1
-                        )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group col-md-2" }, [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-secondary",
+                                attrs: {
+                                  disabled: _vm.newCourtIsClicked,
+                                  type: "button"
+                                },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.newCourt()
+                                  }
+                                }
+                              },
+                              [_vm._v("Refuza")]
+                            )
+                          ])
+                        ])
                       ])
                     : _vm._e(),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(18, true),
+                    _vm._m(19, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41785,7 +41881,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(19, true),
+                    _vm._m(20, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41835,7 +41931,7 @@ var render = function() {
             trial.type === "waiting" && !_vm.timePassed(trial.date)
               ? _c("div", [
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(20, true),
+                    _vm._m(21, true),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -41857,7 +41953,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(21, true),
+                    _vm._m(22, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41957,7 +42053,7 @@ var staticRenderFns = [
       _c("div", { staticClass: "form-group col-md-5" }, [
         _c("input", {
           staticClass: "form-control",
-          attrs: { type: "text", value: "Rejudecare", disabled: "" }
+          attrs: { type: "text", value: "Amanare cauza", disabled: "" }
         })
       ])
     ])
@@ -42006,7 +42102,7 @@ var staticRenderFns = [
       _c("div", { staticClass: "form-group col-md-5" }, [
         _c("input", {
           staticClass: "form-control",
-          attrs: { type: "text", value: "Incheiere", disabled: "" }
+          attrs: { type: "text", value: "Hotarare", disabled: "" }
         })
       ])
     ])
@@ -42057,6 +42153,14 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group col-md-2" }, [
       _c("label", [_vm._v("Data rejudecarii")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group col-md-2" }, [
+      _c("label", [_vm._v("Complet")])
     ])
   },
   function() {
