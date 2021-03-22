@@ -19,33 +19,33 @@ class FileController extends Controller
 
     public function search(Request $request) 
     {
-	if ($request->term == "")
-	  return File::with('crimes')->get();
+        if ($request->term === "")
+          return File::with('crimes')->get();
 
-	//search by number
-	$pieces_term = explode("/", $request->term);
-	if (count($pieces_term) === 3) 
-	{
-	    $file = File::where('id', $pieces_term[0])->with('crimes')->get();
-	    if (count($file)) 
-	    {
-		$date_pieces = explode("-", $file[0]->date_registered);
-		if ($pieces_term[2] === $date_pieces[0])
-		    return $file;
-	    }
-	}
-	    
-	//search by part name
-	$files = File::whereHas('parts', function ($query) use($request) {
-		     return $query->where('name', 'like', '%' . $request->term . '%');
-		 })->with('crimes')->get();
-	if (count($files))
-	    return $files;
+        //search by number
+        $pieces_term = explode("/", $request->term);
+        if (count($pieces_term) === 3) 
+        {
+            $file = File::where('id', $pieces_term[0])->with('crimes')->get();
+            if (count($file)) 
+            {
+            $date_pieces = explode("-", $file[0]->date_registered);
+            if ($pieces_term[2] === $date_pieces[0])
+                return $file;
+            }
+        }
+            
+        //search by part name
+        $files = File::whereHas('parts', function ($query) use($request) {
+                 return $query->where('name', 'like', '%' . $request->term . '%');
+             })->with('crimes')->get();
+        if (count($files))
+            return $files;
 
-	//search by crime 
-	return File::whereHas('crimes', function ($query) use($request) {
-	    return $query->where('name', 'like', '%' . $request->term . '%');
-	})->with('crimes')->get();
+        //search by crime 
+        return File::whereHas('crimes', function ($query) use($request) {
+            return $query->where('name', 'like', '%' . $request->term . '%');
+        })->with('crimes')->get();
 	
     }  
 
@@ -96,7 +96,7 @@ class FileController extends Controller
 
         }
     
-	$newFile->crimes()->attach($request->crimesIds);
+        $newFile->crimes()->attach($request->crimesIds);
         
         $newTrial = new Trial;
         $newTrial->court_id = $request->court_id;
