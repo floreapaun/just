@@ -25,36 +25,21 @@
           <input type="text" class="form-control" placeholder="Penal" disabled>
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group col-md-2">
-          <label>Obiect</label>
-        </div>
-        <div class="form-group col-md-6">
-          <select v-model="crime" disabled>
-            <option>Luarea de mita</option>
-            <option>Traficul de influenta</option>
-            <option>Cumpararea de influenta</option>
-            <option>Fapte savarsite de catre membrii instantelor de arbitraj sau in legatura cu acestia</option>
-            <option>Fapte savarsite de catre functionari straini sau in legatura cu acestia</option>
-            <option>Delapidare</option>
-            <option>Abuz in serviciu</option>
-            <option>Neglijenta in serviciu</option>
-            <option>Folosirea abuziva a functiei in scop sexual</option>
-            <option>Uzurparea functiei</option>
-            <option>Conflict de interese</option>
-            <option>Obtinere ilegala de fonduri</option>
-            <option>Deturnare de fonduri</option>
-            <option>Evaziune fiscala</option>
-            <option>Infractiuni asimilate infractiunilor de coruptie</option>
-            <option>Spalarea banilor</option>
-            <option>Infractiuni impotriva intereselor financiare ale Uniunii Europene</option>
-            <option>Masuri si exceptii dispuse de judecatorul de camera preliminara</option>
-            <option>Masuri preventive</option>
-            <option>Contestatii - Drepturi si Libertati</option>
-          </select>
-        </div>
+
+      <h2>Obiecte</h2>
+      <div class="crimes">	
+	<div v-for="(fileCrime, index) in fileCrimes" :key="index" class="form-row">
+	  <div class="form-group col-md-6 my-auto">
+	    <select v-model="fileCrime.name" disabled>
+	      <option v-for="crime in crimes">{{ crime.name }}</option>
+	    </select>
+	  </div>
+	</div>
       </div>
-      <h1>Parti</h1>
+ 
+      <hr>
+
+      <h2>Parti</h2>
       <div class="parts">
         <div class="form-row" v-for="(part, index) in parts" :key="index">
           <div class="form-group col-md-6">
@@ -279,7 +264,8 @@ export default {
       nextCourt: {},
       newCourtIsClicked: false,
       courts: [],
-      crime: "",
+      fileCrimes: [],
+      crimes: [],
       parts: [],
       trials: [],
       ro: ro,
@@ -287,34 +273,30 @@ export default {
   },
 
   methods: {
-    getFileData() {
+    getFileData () {
       axios
         .post("/api/file/data", { id: this.propsFileid })
         .then((response) => {
           this.pickerdate = response.data[0].date_registered;
+
           let parts = response.data[0].date_registered.split("-");
           this.file_number = this.propsFileid + "/183/" + parts[0];
-          this.crime = response.data[0].crime;
+
+	  this.parts = response.data[0].parts;
+	  this.trials = response.data[0].trials;
+          this.fileCrimes = response.data[0].crimes;
         })
         .catch((error) => {
           console.log(error);
         });
+    },
 
-      axios
-        .post("/api/file/parts", { id: this.propsFileid })
-        .then((response) => {
-          this.parts = response.data;
+    getCrimes () {
+      axios.post('/api/crimes/index')
+        .then( response => {
+          this.crimes = response.data;
         })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      axios
-        .post("/api/file/trials", { file_id: this.propsFileid })
-        .then((response) => {
-          this.trials = response.data;
-        })
-        .catch((error) => {
+        .catch( error => {
           console.log(error);
         });
     },
@@ -369,6 +351,7 @@ export default {
 
   beforeMount: function () {
     this.getFileData();
+    this.getCrimes();
   },
 
   mounted: function () {}

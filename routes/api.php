@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\TrialController;
 use App\Http\Controllers\CourtController;
+use App\Http\Controllers\CrimeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,14 +23,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/file/data', [FileController::class, 'data']);
-Route::post('/file/parts', [FileController::class, 'parts']);
-Route::post('/file/trials', [FileController::class, 'trials']);
 Route::post('/file/search', [FileController::class, 'search']);
-
 Route::post('/trial/update', [TrialController::class, 'update']);
-Route::post('/trials/courts', [TrialController::class, 'courts']);
-
+Route::post('/crimes/index', [CrimeController::class, 'index']);
 Route::post('courts/index', [CourtController::class, 'index']);
+Route::post('/trials/courts', [CourtController::class, 'at_date']);
 Route::prefix('/court')->group(function() {
     Route::post('/update', [CourtController::class, 'update']);
     Route::post('/store', [CourtController::class, 'store']);

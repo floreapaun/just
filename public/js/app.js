@@ -2427,21 +2427,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ["propsFileid"],
@@ -2456,7 +2441,8 @@ __webpack_require__.r(__webpack_exports__);
       nextCourt: {},
       newCourtIsClicked: false,
       courts: [],
-      crime: "",
+      fileCrimes: [],
+      crimes: [],
       parts: [],
       trials: [],
       ro: vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_0__.ro
@@ -2472,21 +2458,18 @@ __webpack_require__.r(__webpack_exports__);
         _this.pickerdate = response.data[0].date_registered;
         var parts = response.data[0].date_registered.split("-");
         _this.file_number = _this.propsFileid + "/183/" + parts[0];
-        _this.crime = response.data[0].crime;
+        _this.parts = response.data[0].parts;
+        _this.trials = response.data[0].trials;
+        _this.fileCrimes = response.data[0].crimes;
       })["catch"](function (error) {
         console.log(error);
       });
-      axios.post("/api/file/parts", {
-        id: this.propsFileid
-      }).then(function (response) {
-        _this.parts = response.data;
-      })["catch"](function (error) {
-        console.log(error);
-      });
-      axios.post("/api/file/trials", {
-        file_id: this.propsFileid
-      }).then(function (response) {
-        _this.trials = response.data;
+    },
+    getCrimes: function getCrimes() {
+      var _this2 = this;
+
+      axios.post('/api/crimes/index').then(function (response) {
+        _this2.crimes = response.data;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2499,20 +2482,20 @@ __webpack_require__.r(__webpack_exports__);
       this.nextCourt = court;
     },
     newCourt: function newCourt() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.post("/api/court/new", {
         court_id: this.nextCourt.id
       }).then(function (response) {
         console.log(response.data);
-        _this2.nextCourt = response.data;
+        _this3.nextCourt = response.data;
       })["catch"](function (error) {
         console.log(error);
       });
       this.newCourtIsClicked = true;
     },
     updateTrials: function updateTrials(trial_id) {
-      var _this3 = this;
+      var _this4 = this;
 
       var data = {
         id: trial_id,
@@ -2523,11 +2506,11 @@ __webpack_require__.r(__webpack_exports__);
         solution: this.solution
       };
       axios.post("/api/trial/update", data).then(function (response) {
-        _this3.trials = response.data;
-        _this3.type_update = "";
-        _this3.doc = '';
-        _this3.solution = '';
-        _this3.newCourtIsClicked = false;
+        _this4.trials = response.data;
+        _this4.type_update = "";
+        _this4.doc = '';
+        _this4.solution = '';
+        _this4.newCourtIsClicked = false;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2535,6 +2518,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   beforeMount: function beforeMount() {
     this.getFileData();
+    this.getCrimes();
   },
   mounted: function mounted() {}
 });
@@ -2743,21 +2727,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
+
+
+var bootbox = __webpack_require__(/*! bootbox */ "./node_modules/bootbox/bootbox.all.js");
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       pickerdate: new Date(),
       court: {},
-      crime: '',
+      fileCrimes: [],
+      crimes: [],
       parts: [],
       ro: vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_0__.ro
     };
@@ -2769,35 +2749,98 @@ __webpack_require__.r(__webpack_exports__);
         type: ''
       });
     },
+    addCrime: function addCrime() {
+      this.fileCrimes.push({
+        id: -1,
+        name: ''
+      });
+    },
+    onChange: function onChange(event, index) {
+      var _this = this;
+
+      console.log(event.target.value);
+      if (this.fileCrimes.some(function (element) {
+        return element.id != -1 && element.name === event.target.value;
+      })) bootbox.alert({
+        title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+        message: "<p>Obiectul a mai fost adaugat.</p>"
+      });else {
+        this.fileCrimes[index].name = event.target.value;
+        this.crimes.forEach(function (element) {
+          if (element.name === event.target.value) _this.fileCrimes[index].id = element.id;
+        });
+      }
+      console.log(this.fileCrimes);
+    },
+    deleteCrime: function deleteCrime(index) {
+      console.log(index);
+      this.fileCrimes.splice(index, 1);
+    },
     deletePart: function deletePart(index) {
       console.log(index);
       this.parts.splice(index, 1);
     },
+    //get a random court 
     getCourt: function getCourt() {
-      var _this = this;
+      var _this2 = this;
 
       axios.get('/court').then(function (response) {
-        _this.court = response.data;
+        _this2.court = response.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    getCrimes: function getCrimes() {
+      var _this3 = this;
+
+      axios.post('/api/crimes/index').then(function (response) {
+        _this3.crimes = response.data;
       })["catch"](function (error) {
         console.log(error);
       });
     },
     submit: function submit() {
-      var data = {
-        crime: this.crime,
-        date: this.pickerdate,
-        parts: this.parts,
-        court_id: this.court.id
-      };
-      axios.post('/file/store', data).then(function (response) {
-        window.location = 'http://localhost:8000/files';
-      })["catch"](function (error) {
-        console.log(error);
-      });
+      if (!this.fileCrimes.length) bootbox.alert({
+        title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+        message: "<p>Nu au fost adaugate obiecte.</p>"
+      });else if (this.fileCrimes.some(function (e) {
+        return e.name === '';
+      })) bootbox.alert({
+        title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+        message: "<p>Obiectul nu a fost selectat din lista.</p>"
+      });else if (!this.parts.length) bootbox.alert({
+        title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+        message: "<p>Nu au fost adaugate parti.</p>"
+      });else if (this.parts.some(function (e) {
+        return e.name === '';
+      })) bootbox.alert({
+        title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+        message: "<p>Numele unei parti e necompletat.</p>"
+      });else if (this.parts.some(function (e) {
+        return e.type === '';
+      })) bootbox.alert({
+        title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+        message: "<p>Calitatea unei parti e necompletata.</p>"
+      });else {
+        var data = {
+          crimesIds: this.fileCrimes.map(function (e) {
+            return e.id;
+          }),
+          date: this.pickerdate,
+          parts: this.parts,
+          court_id: this.court.id
+        };
+        axios.post('/file/store', data).then(function (response) {
+          window.location = 'http://localhost:8000/files';
+        })["catch"](function (error) {
+          console.log(error);
+        });
+      }
     }
   },
   mounted: function mounted() {
     this.getCourt();
+    this.getCrimes();
   }
 });
 
@@ -40884,7 +40927,13 @@ var render = function() {
                           _vm._v(_vm._s(_vm.changeFormat(file.date_registered)))
                         ]),
                         _vm._v(" "),
-                        _c("td", [_vm._v(_vm._s(file.crime))]),
+                        _c(
+                          "td",
+                          _vm._l(file.crimes, function(crime) {
+                            return _c("p", [_vm._v(_vm._s(crime.name))])
+                          }),
+                          0
+                        ),
                         _vm._v(" "),
                         _c("td", [_vm._v("Penal")]),
                         _vm._v(" "),
@@ -41308,104 +41357,60 @@ var render = function() {
       _vm._v(" "),
       _vm._m(2),
       _vm._v(" "),
-      _c("div", { staticClass: "form-row" }, [
-        _vm._m(3),
-        _vm._v(" "),
-        _c("div", { staticClass: "form-group col-md-6" }, [
-          _c(
-            "select",
-            {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.crime,
-                  expression: "crime"
-                }
-              ],
-              attrs: { disabled: "" },
-              on: {
-                change: function($event) {
-                  var $$selectedVal = Array.prototype.filter
-                    .call($event.target.options, function(o) {
-                      return o.selected
-                    })
-                    .map(function(o) {
-                      var val = "_value" in o ? o._value : o.value
-                      return val
-                    })
-                  _vm.crime = $event.target.multiple
-                    ? $$selectedVal
-                    : $$selectedVal[0]
-                }
-              }
-            },
-            [
-              _c("option", [_vm._v("Luarea de mita")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Traficul de influenta")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Cumpararea de influenta")]),
-              _vm._v(" "),
-              _c("option", [
-                _vm._v(
-                  "Fapte savarsite de catre membrii instantelor de arbitraj sau in legatura cu acestia"
-                )
-              ]),
-              _vm._v(" "),
-              _c("option", [
-                _vm._v(
-                  "Fapte savarsite de catre functionari straini sau in legatura cu acestia"
-                )
-              ]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Delapidare")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Abuz in serviciu")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Neglijenta in serviciu")]),
-              _vm._v(" "),
-              _c("option", [
-                _vm._v("Folosirea abuziva a functiei in scop sexual")
-              ]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Uzurparea functiei")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Conflict de interese")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Obtinere ilegala de fonduri")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Deturnare de fonduri")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Evaziune fiscala")]),
-              _vm._v(" "),
-              _c("option", [
-                _vm._v("Infractiuni asimilate infractiunilor de coruptie")
-              ]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Spalarea banilor")]),
-              _vm._v(" "),
-              _c("option", [
-                _vm._v(
-                  "Infractiuni impotriva intereselor financiare ale Uniunii Europene"
-                )
-              ]),
-              _vm._v(" "),
-              _c("option", [
-                _vm._v(
-                  "Masuri si exceptii dispuse de judecatorul de camera preliminara"
-                )
-              ]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Masuri preventive")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Contestatii - Drepturi si Libertati")])
-            ]
-          )
-        ])
-      ]),
+      _c("h2", [_vm._v("Obiecte")]),
       _vm._v(" "),
-      _c("h1", [_vm._v("Parti")]),
+      _c(
+        "div",
+        { staticClass: "crimes" },
+        _vm._l(_vm.fileCrimes, function(fileCrime, index) {
+          return _c("div", { key: index, staticClass: "form-row" }, [
+            _c("div", { staticClass: "form-group col-md-6 my-auto" }, [
+              _c(
+                "select",
+                {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: fileCrime.name,
+                      expression: "fileCrime.name"
+                    }
+                  ],
+                  attrs: { disabled: "" },
+                  on: {
+                    change: function($event) {
+                      var $$selectedVal = Array.prototype.filter
+                        .call($event.target.options, function(o) {
+                          return o.selected
+                        })
+                        .map(function(o) {
+                          var val = "_value" in o ? o._value : o.value
+                          return val
+                        })
+                      _vm.$set(
+                        fileCrime,
+                        "name",
+                        $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      )
+                    }
+                  }
+                },
+                _vm._l(_vm.crimes, function(crime) {
+                  return _c("option", [_vm._v(_vm._s(crime.name))])
+                }),
+                0
+              )
+            ])
+          ])
+        }),
+        0
+      ),
+      _vm._v(" "),
+      _c("hr"),
+      _vm._v(" "),
+      _c("h2", [_vm._v("Parti")]),
       _vm._v(" "),
       _c(
         "div",
@@ -41505,7 +41510,7 @@ var render = function() {
             trial.type === "continued"
               ? _c("div", [
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(4, true),
+                    _vm._m(3, true),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -41527,7 +41532,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(5, true),
+                    _vm._m(4, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41538,10 +41543,10 @@ var render = function() {
                     ])
                   ]),
                   _vm._v(" "),
-                  _vm._m(6, true),
+                  _vm._m(5, true),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(7, true),
+                    _vm._m(6, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41569,7 +41574,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(8, true),
+                    _vm._m(7, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41601,7 +41606,7 @@ var render = function() {
             trial.type === "ended"
               ? _c("div", [
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(9, true),
+                    _vm._m(8, true),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -41623,7 +41628,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(10, true),
+                    _vm._m(9, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41634,10 +41639,10 @@ var render = function() {
                     ])
                   ]),
                   _vm._v(" "),
-                  _vm._m(11, true),
+                  _vm._m(10, true),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(12, true),
+                    _vm._m(11, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41665,7 +41670,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(13, true),
+                    _vm._m(12, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41697,7 +41702,7 @@ var render = function() {
             trial.type === "waiting" && _vm.timePassed(trial.date)
               ? _c("div", [
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(14, true),
+                    _vm._m(13, true),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -41719,7 +41724,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(15, true),
+                    _vm._m(14, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41731,7 +41736,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(16, true),
+                    _vm._m(15, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c(
@@ -41778,7 +41783,7 @@ var render = function() {
                   _vm.type_update === "Amana cauza"
                     ? _c("div", [
                         _c("div", { staticClass: "form-row" }, [
-                          _vm._m(17, true),
+                          _vm._m(16, true),
                           _vm._v(" "),
                           _c(
                             "div",
@@ -41800,7 +41805,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("div", { staticClass: "form-row" }, [
-                          _vm._m(18, true),
+                          _vm._m(17, true),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group col-md-5" }, [
                             _c("input", {
@@ -41853,7 +41858,7 @@ var render = function() {
                     : _vm._e(),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(19, true),
+                    _vm._m(18, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41881,7 +41886,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(20, true),
+                    _vm._m(19, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41931,7 +41936,7 @@ var render = function() {
             trial.type === "waiting" && !_vm.timePassed(trial.date)
               ? _c("div", [
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(21, true),
+                    _vm._m(20, true),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -41953,7 +41958,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(22, true),
+                    _vm._m(21, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -42015,14 +42020,6 @@ var staticRenderFns = [
           attrs: { type: "text", placeholder: "Penal", disabled: "" }
         })
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group col-md-2" }, [
-      _c("label", [_vm._v("Obiect")])
     ])
   },
   function() {
@@ -42256,7 +42253,13 @@ var render = function() {
             _vm._v(" "),
             _c("td", [_vm._v(_vm._s(_vm.changeFormat(file.date_registered)))]),
             _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(file.crime))]),
+            _c(
+              "td",
+              _vm._l(file.crimes, function(crime) {
+                return _c("p", [_vm._v(_vm._s(crime.name))])
+              }),
+              0
+            ),
             _vm._v(" "),
             _c("td", [_vm._v("Penal")]),
             _vm._v(" "),
@@ -42293,7 +42296,7 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("th", [_vm._v("Data inregistrarii")]),
       _vm._v(" "),
-      _c("th", [_vm._v("Obiect")]),
+      _c("th", [_vm._v("Obiecte")]),
       _vm._v(" "),
       _c("th", [_vm._v("Materie juridica")]),
       _vm._v(" "),
@@ -42329,103 +42332,96 @@ var render = function() {
       _vm._v(" "),
       _vm._m(1),
       _vm._v(" "),
-      _c("div", { staticClass: "form-row" }, [
-        _vm._m(2),
-        _vm._v(" "),
-        _c("div", { staticClass: "form-group col-md-6" }, [
-          _c(
-            "select",
-            {
-              directives: [
+      _c("h2", [_vm._v("Obiecte")]),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "crimes" },
+        _vm._l(_vm.fileCrimes, function(fileCrime, index) {
+          return _c("div", { key: index, staticClass: "form-row" }, [
+            _c("div", { staticClass: "form-group col-md-6 my-auto" }, [
+              _c(
+                "select",
                 {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.crime,
-                  expression: "crime"
-                }
-              ],
-              on: {
-                change: function($event) {
-                  var $$selectedVal = Array.prototype.filter
-                    .call($event.target.options, function(o) {
-                      return o.selected
-                    })
-                    .map(function(o) {
-                      var val = "_value" in o ? o._value : o.value
-                      return val
-                    })
-                  _vm.crime = $event.target.multiple
-                    ? $$selectedVal
-                    : $$selectedVal[0]
-                }
-              }
-            },
-            [
-              _c("option", [_vm._v("Luarea de mita")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Traficul de influenta")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Cumpararea de influenta")]),
-              _vm._v(" "),
-              _c("option", [
-                _vm._v(
-                  "Fapte savarsite de catre membrii instantelor de arbitraj sau in legatura cu acestia"
-                )
-              ]),
-              _vm._v(" "),
-              _c("option", [
-                _vm._v(
-                  "Fapte savarsite de catre functionari straini sau in legatura cu acestia"
-                )
-              ]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Delapidare")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Abuz in serviciu")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Neglijenta in serviciu")]),
-              _vm._v(" "),
-              _c("option", [
-                _vm._v("Folosirea abuziva a functiei in scop sexual")
-              ]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Uzurparea functiei")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Conflict de interese")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Obtinere ilegala de fonduri")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Deturnare de fonduri")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Evaziune fiscala")]),
-              _vm._v(" "),
-              _c("option", [
-                _vm._v("Infractiuni asimilate infractiunilor de coruptie")
-              ]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Spalarea banilor")]),
-              _vm._v(" "),
-              _c("option", [
-                _vm._v(
-                  "Infractiuni impotriva intereselor financiare ale Uniunii Europene"
-                )
-              ]),
-              _vm._v(" "),
-              _c("option", [
-                _vm._v(
-                  "Masuri si exceptii dispuse de judecatorul de camera preliminara"
-                )
-              ]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Masuri preventive")]),
-              _vm._v(" "),
-              _c("option", [_vm._v("Contestatii - Drepturi si Libertati")])
-            ]
-          )
-        ])
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: fileCrime.name,
+                      expression: "fileCrime.name"
+                    }
+                  ],
+                  on: {
+                    change: [
+                      function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          fileCrime,
+                          "name",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      },
+                      function($event) {
+                        return _vm.onChange($event, index)
+                      }
+                    ]
+                  }
+                },
+                _vm._l(_vm.crimes, function(crime) {
+                  return _c("option", [_vm._v(_vm._s(crime.name))])
+                }),
+                0
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group col-md-1 my-auto" }, [
+              _c(
+                "a",
+                {
+                  attrs: { href: "#" },
+                  on: {
+                    click: function($event) {
+                      return _vm.deleteCrime(index)
+                    }
+                  }
+                },
+                [
+                  _c("i", {
+                    staticClass: "bi-file-x",
+                    staticStyle: { "font-size": "2rem", color: "red" }
+                  })
+                ]
+              )
+            ])
+          ])
+        }),
+        0
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-secondary",
+            attrs: { type: "button" },
+            on: { click: _vm.addCrime }
+          },
+          [_vm._v("Adauga obiect")]
+        )
       ]),
       _vm._v(" "),
-      _c("h1", [_vm._v("Parti")]),
+      _c("hr"),
+      _vm._v(" "),
+      _c("h2", [_vm._v("Parti")]),
       _vm._v(" "),
       _c(
         "div",
@@ -42552,7 +42548,7 @@ var render = function() {
       _c("hr"),
       _vm._v(" "),
       _c("div", { staticClass: "form-row" }, [
-        _vm._m(3),
+        _vm._m(2),
         _vm._v(" "),
         _c(
           "div",
@@ -42574,7 +42570,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "form-row" }, [
-        _vm._m(4),
+        _vm._m(3),
         _vm._v(" "),
         _c("div", { staticClass: "form-group col-md-5" }, [
           _c("input", {
@@ -42652,14 +42648,6 @@ var staticRenderFns = [
           attrs: { type: "text", placeholder: "Penal", disabled: "" }
         })
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group col-md-2" }, [
-      _c("label", [_vm._v("Obiect")])
     ])
   },
   function() {
