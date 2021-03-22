@@ -24,6 +24,16 @@ class CourtController extends Controller
         return Court::where([["active", true], ["id", "!=", $request->court_id]])->inRandomOrder()->first(); 
     }
 
+    public function at_date(Request $request)
+    {
+ 
+	return Court::where('active', true)->with(['files' => function ($query) use($request) {
+	           return $query->whereHas('trials', function ($query) use($request) {
+		       return $query->where([['type', 'waiting'], ['date', date('Y-m-d', strtotime($request->date))]]);
+		   })->with('crimes')->get();
+	       }])->get();
+    }
+
     public function random()
     {
         return Court::where("active", true)->inRandomOrder()->first(); 

@@ -5,18 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Court extends Model
+class Crime extends Model
 {
     use HasFactory;
-   
+
     public $timestamps = false;
 
     protected $fillable = [
-        'active',
+        'name',
     ];
 
     public function files()
     {
-        return $this->belongsToMany(File::class, 'trials')->using(Trial::class);
+        return $this->belongsToMany(File::class); 
     }
+
 }

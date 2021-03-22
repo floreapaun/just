@@ -19,37 +19,29 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group col-md-2">
-            <label>Obiect</label>
+      <h2>Obiecte</h2>
+      <div class="crimes">	
+	<div v-for="(fileCrime, index) in fileCrimes" :key="index" class="form-row">
+	  <div class="form-group col-md-6 my-auto">
+	    <select v-model="fileCrime.name" @change="onChange($event, index)">
+	      <option v-for="crime in crimes">{{ crime.name }}</option>
+	    </select>
+	  </div>
+          <div class="form-group col-md-1 my-auto">
+	    <a href="#" @click="deleteCrime(index)">
+	      <i class="bi-file-x" style="font-size: 2rem; color: red;"></i>
+	    </a>
           </div>
-          <div class="form-group col-md-6">
-            <select v-model="crime">
-              <option>Luarea de mita</option>
-              <option>Traficul de influenta</option>
-              <option>Cumpararea de influenta</option>
-              <option>Fapte savarsite de catre membrii instantelor de arbitraj sau in legatura cu acestia</option>
-              <option>Fapte savarsite de catre functionari straini sau in legatura cu acestia</option>
-              <option>Delapidare</option>
-              <option>Abuz in serviciu</option>
-              <option>Neglijenta in serviciu</option>
-              <option>Folosirea abuziva a functiei in scop sexual</option>
-              <option>Uzurparea functiei</option>
-              <option>Conflict de interese</option>
-              <option>Obtinere ilegala de fonduri</option>
-              <option>Deturnare de fonduri</option>
-              <option>Evaziune fiscala</option>
-              <option>Infractiuni asimilate infractiunilor de coruptie</option>
-              <option>Spalarea banilor</option>
-              <option>Infractiuni impotriva intereselor financiare ale Uniunii Europene</option>
-              <option>Masuri si exceptii dispuse de judecatorul de camera preliminara</option>
-              <option>Masuri preventive</option>
-              <option>Contestatii - Drepturi si Libertati</option>
-            </select>
-          </div>
-        </div>
+	</div>
+      </div>
 
-      <h1>Parti</h1>
+      <div class="form-group">
+        <button @click="addCrime" type="button" class="btn btn-secondary">Adauga obiect</button>
+      </div>
+
+      <hr>
+
+      <h2>Parti</h2>
       <div class="parts">
 
         <div class="form-row" v-for="(part, index) in parts" :key="index">
@@ -113,13 +105,15 @@
 
 <script>
 import {ro} from 'vuejs-datepicker/dist/locale';
+let bootbox = require('bootbox');
 export default {
 
   data: function() { 
     return {
       pickerdate: new Date(),
       court: {},
-      crime: '',
+      fileCrimes: [],
+      crimes: [],
       parts: [],
       ro: ro
     }
@@ -129,8 +123,37 @@ export default {
     addPart () {
       this.parts.push({
         name: '',
-        type: ''
+        type: '',
       })
+    },
+
+    addCrime () {
+      this.fileCrimes.push({
+	id: -1,
+        name: '',
+      })
+    },
+
+    onChange (event, index) {
+      console.log(event.target.value);     
+      if (this.fileCrimes.some( element => element.id != -1 && element.name === event.target.value))
+	bootbox.alert({
+	  title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+	  message: "<p>Obiectul a mai fost adaugat.</p>"
+	});
+      else {
+	this.fileCrimes[index].name = event.target.value;
+	this.crimes.forEach( element => {
+	  if (element.name === event.target.value)
+	    this.fileCrimes[index].id = element.id;
+	});
+      }
+      console.log(this.fileCrimes);
+    },
+
+    deleteCrime (index) {
+      console.log(index);
+      this.fileCrimes.splice(index, 1);
     },
     
     deletePart (index) {
@@ -138,6 +161,7 @@ export default {
       this.parts.splice(index, 1);
     },
 
+    //get a random court 
     getCourt () {
       axios.get('/court')
         .then( response => {
@@ -145,28 +169,71 @@ export default {
         })
         .catch( error => {
           console.log(error);
+        });
+    },
+    
+    getCrimes () {
+      axios.post('/api/crimes/index')
+        .then( response => {
+          this.crimes = response.data;
         })
+        .catch( error => {
+          console.log(error);
+        });
     },
 
     submit () {
-      const data = {
-        crime: this.crime,
-        date: this.pickerdate,
-        parts: this.parts,
-        court_id: this.court.id
-      }
-        
-      axios.post('/file/store', data)
-        .then( response => {
-            window.location = 'http://localhost:8000/files';
-        }).catch( error => {
-            console.log(error);
-        })
+
+      if (!this.fileCrimes.length)
+	bootbox.alert({
+	  title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+	  message: "<p>Nu au fost adaugate obiecte.</p>"
+	});
+      else
+	if (this.fileCrimes.some(e => e.name ===''))
+	  bootbox.alert({
+	    title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+	    message: "<p>Obiectul nu a fost selectat din lista.</p>"
+	});
+	else
+	  if (!this.parts.length)
+	  bootbox.alert({
+	    title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+	    message: "<p>Nu au fost adaugate parti.</p>"
+	  });
+	  else
+	    if (this.parts.some(e => e.name ===''))
+	      bootbox.alert({
+		title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+		message: "<p>Numele unei parti e necompletat.</p>"
+	      });
+	    else 
+	      if (this.parts.some(e => e.type ===''))
+		bootbox.alert({
+		  title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+		  message: "<p>Calitatea unei parti e necompletata.</p>"
+		});
+	      else {
+		const data = {
+		  crimesIds: this.fileCrimes.map(e => e.id), 
+		  date: this.pickerdate,
+		  parts: this.parts,
+		  court_id: this.court.id
+		};
+		  
+		axios.post('/file/store', data)
+		  .then( response => {
+		      window.location = 'http://localhost:8000/files';
+		  }).catch( error => {
+		      console.log(error);
+		  });
+	      }
     }
   },
 
   mounted: function() {
-    this.getCourt()
+    this.getCourt();
+    this.getCrimes();
   }
 
 };

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\File;
 use App\Models\Part;
 use App\Models\Trial;
+use App\Models\Crime;
 use Illuminate\Support\Facades\Auth;
 
 class FileController extends Controller
@@ -18,38 +19,34 @@ class FileController extends Controller
 
     public function search(Request $request) 
     {
-	$files = array();
+	if ($request->term == "")
+	  return File::with('crimes')->get();
 
 	//search by number
 	$pieces_term = explode("/", $request->term);
 	if (count($pieces_term) === 3) 
 	{
-	    $file = File::find($pieces_term[0]);
-	    if ($file)
-		$date_pieces = explode("-", $file->date_registered);
+	    $file = File::where('id', $pieces_term[0])->with('crimes')->get();
+	    if (count($file)) 
+	    {
+		$date_pieces = explode("-", $file[0]->date_registered);
 		if ($pieces_term[2] === $date_pieces[0])
-		{
-		    array_push($files, $file);
-		    return $files;
-		}
+		    return $file;
+	    }
 	}
 	    
 	//search by part name
-	$parts = Part::where('name', 'like', '%' . $request->term . '%')->get();
-	if ($parts->isNotEmpty())
-	{
-	    foreach ($parts as $part)
-		if (!in_array($part->file, $files))
-		    array_push($files, $part->file);
-	  return $files;
-	}
+	$files = File::whereHas('parts', function ($query) use($request) {
+		     return $query->where('name', 'like', '%' . $request->term . '%');
+		 })->with('crimes')->get();
+	if (count($files))
+	    return $files;
 
 	//search by crime 
-	$crime_files = File::where('crime', 'like', '%' . $request->term . '%')->get();
-	if ($crime_files->isNotEmpty())
-	  return $crime_files;
+	return File::whereHas('crimes', function ($query) use($request) {
+	    return $query->where('name', 'like', '%' . $request->term . '%');
+	})->with('crimes')->get();
 	
-	return false;  
     }  
 
 
@@ -57,7 +54,7 @@ class FileController extends Controller
     {
         return view('files.index')
 	       ->withFiles(File::orderBy('date_registered', 'DESC')
-               ->get());
+               ->with('crimes')->get());
     }
 
     /**
@@ -72,17 +69,7 @@ class FileController extends Controller
 
     public function data(Request $request)
     {
-       return File::where('id', $request->id)->get();
-    }
-
-    public function parts(Request $request)
-    {
-       return File::find($request->id)->parts;
-    }
-
-    public function trials(Request $request)
-    {
-       return Trial::where('file_id', $request->file_id)->with('court')->get();
+       return File::where('id', $request->id)->with('parts', 'crimes', 'trials.court')->get();
     }
 
     /**
@@ -96,7 +83,6 @@ class FileController extends Controller
 
         $newFile = new File;
         $newFile->user_id = Auth::id();
-        $newFile->crime = $request->crime;
         $newFile->date_registered = date('Y-m-d', strtotime($request->date));
         $newFile->save();
         
@@ -109,6 +95,8 @@ class FileController extends Controller
             $newPart->save();
 
         }
+    
+	$newFile->crimes()->attach($request->crimesIds);
         
         $newTrial = new Trial;
         $newTrial->court_id = $request->court_id;

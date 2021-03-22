@@ -43,7 +43,7 @@
 	  <tr v-for="file in files" >
 	    <td> <a :href="'file/' + file.id">{{ file.id }}/183/{{ getYear(file.date_registered) }}</a></td>
 	    <td>{{ changeFormat(file.date_registered) }}</td>
-	    <td>{{ file.crime }}</td>
+	    <td><p v-for="crime in file.crimes">{{ crime.name }}</p></td>
 	    <td>Penal</td>
 	    <td>Apel</td>
 	  </tr>
