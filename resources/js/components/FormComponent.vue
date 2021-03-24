@@ -163,7 +163,7 @@ export default {
 
     //get a random court 
     getCourt () {
-      axios.get('/court')
+      axios.post('/api/court/random')
         .then( response => {
           this.court = response.data;
         })
@@ -185,49 +185,49 @@ export default {
     submit () {
 
       if (!this.fileCrimes.length)
-	bootbox.alert({
-	  title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
-	  message: "<p>Nu au fost adaugate obiecte.</p>"
-	});
+        bootbox.alert({
+          title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+          message: "<p>Nu au fost adaugate obiecte.</p>"
+        });
       else
-	if (this.fileCrimes.some(e => e.name ===''))
-	  bootbox.alert({
-	    title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
-	    message: "<p>Obiectul nu a fost selectat din lista.</p>"
-	});
-	else
-	  if (!this.parts.length)
-	  bootbox.alert({
-	    title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
-	    message: "<p>Nu au fost adaugate parti.</p>"
-	  });
-	  else
-	    if (this.parts.some(e => e.name ===''))
-	      bootbox.alert({
-		title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
-		message: "<p>Numele unei parti e necompletat.</p>"
-	      });
-	    else 
-	      if (this.parts.some(e => e.type ===''))
-		bootbox.alert({
-		  title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
-		  message: "<p>Calitatea unei parti e necompletata.</p>"
-		});
-	      else {
-		const data = {
-		  crimesIds: this.fileCrimes.map(e => e.id), 
-		  date: this.pickerdate,
-		  parts: this.parts,
-		  court_id: this.court.id
-		};
+        if (this.fileCrimes.some(e => e.name ===''))
+          bootbox.alert({
+            title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+            message: "<p>Obiectul nu a fost selectat din lista.</p>"
+        });
+        else
+          if (!this.parts.length)
+            bootbox.alert({
+              title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+              message: "<p>Nu au fost adaugate parti.</p>"
+            });
+          else
+            if (this.parts.some(e => e.name ===''))
+              bootbox.alert({
+                title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+                message: "<p>Numele unei parti e necompletat.</p>"
+              });
+            else 
+              if (this.parts.some(e => e.type ===''))
+                bootbox.alert({
+                  title: "<i class='bi bi-x-octagon-fill'></i><span>Eroare</span>",
+                  message: "<p>Calitatea unei parti e necompletata.</p>"
+                });
+              else {
+                const data = {
+                  crimesIds: this.fileCrimes.map(e => e.id), 
+                  date: this.pickerdate,
+                  parts: this.parts,
+                  court_id: this.court.id
+                };
 		  
-		axios.post('/file/store', data)
-		  .then( response => {
-		      window.location = 'http://localhost:8000/files';
-		  }).catch( error => {
-		      console.log(error);
-		  });
-	      }
+                axios.post('/file/store', data)
+                  .then( response => {
+                      window.location = 'http://localhost:8000/files';
+                  }).catch( error => {
+                      console.log(error);
+                  });
+              }
     }
   },
 

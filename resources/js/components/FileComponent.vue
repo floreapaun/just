@@ -164,64 +164,68 @@
                 <input type="text" :value="trial.court.name" class="form-control" disabled>
               </div>
             </div>
-            <div class="form-row">
-              <div class="form-group col-md-2">
-                <label>Solutie</label>
-              </div>
-              <div class="form-group col-md-5">
-                <select v-model="type_update" @change="onChange(trial.court)">
-                  <option>Amana cauza</option>
-                  <option>Hotarare</option>
-                </select>
-              </div>
-            </div>
 
-            <div v-if="type_update === 'Amana cauza'">
+            <div v-if="propsIsadmin">
               <div class="form-row">
                 <div class="form-group col-md-2">
-                  <label>Data rejudecarii</label>
+                  <label>Solutie</label>
                 </div>
                 <div class="form-group col-md-5">
-                  <datepicker-component v-model="newtrial_date" :language='ro'>
-                  </datepicker-component>
+                  <select v-model="type_update" @change="onChange(trial.court)">
+                    <option>Amana cauza</option>
+                    <option>Hotarare</option>
+                  </select>
+                </div>
+              </div>
+
+              <div v-if="type_update === 'Amana cauza'">
+                <div class="form-row">
+                  <div class="form-group col-md-2">
+                    <label>Data rejudecarii</label>
+                  </div>
+                  <div class="form-group col-md-5">
+                    <datepicker-component v-model="newtrial_date" :language='ro'>
+                    </datepicker-component>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-2">
+                    <label>Complet</label>
+                  </div>
+                  <div class="form-group col-md-5">
+                    <input type="text" v-model="nextCourt.name" class="form-control">
+                  </div>
+                  <div class="form-group col-md-2">
+                    <button :disabled="newCourtIsClicked" 
+                      @click="newCourt()" type="button" class="btn btn-secondary">Refuza</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-2">
+                  <label>Tip solutie</label>
+                </div>
+                <div class="form-group col-md-5">
+                  <input type="text" v-model="solution" class="form-control">
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group col-md-2">
-                  <label>Complet</label>
+                  <label>Document</label>
                 </div>
                 <div class="form-group col-md-5">
-                  <input type="text" v-model="nextCourt.name" class="form-control">
-                </div>
-                <div class="form-group col-md-2">
-                  <button :disabled="newCourtIsClicked" 
-                    @click="newCourt()" type="button" class="btn btn-secondary">Refuza</button>
+                  <input type="text" v-model="doc" class="form-control">
                 </div>
               </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group col-md-2">
-                <label>Tip solutie</label>
-              </div>
-              <div class="form-group col-md-5">
-                <input type="text" v-model="solution" class="form-control">
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group col-md-2">
-                <label>Document</label>
-              </div>
-              <div class="form-group col-md-5">
-                <input type="text" v-model="doc" class="form-control">
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <button @click="updateTrials(trial.id)" type="button" class="btn btn-secondary">Actualizeaza</button>
+              <div class="form-row">
+                <div class="form-group">
+                  <button @click="updateTrials(trial.id)" type="button" class="btn btn-secondary">Actualizeaza</button>
+                </div>
               </div>
             </div>
           </div>
+
           <div v-if="trial.type === 'waiting' && !timePassed(trial.date)">
             <div class="form-row">
               <div class="form-group col-md-2">
@@ -251,7 +255,7 @@
 <script>
 import { ro } from "vuejs-datepicker/dist/locale";
 export default {
-  props: ["propsFileid"],
+  props: ["propsFileid", "propsIsadmin"],
 
   data: function () {
     return {
@@ -282,8 +286,8 @@ export default {
           let parts = response.data[0].date_registered.split("-");
           this.file_number = this.propsFileid + "/183/" + parts[0];
 
-	  this.parts = response.data[0].parts;
-	  this.trials = response.data[0].trials;
+          this.parts = response.data[0].parts;
+          this.trials = response.data[0].trials;
           this.fileCrimes = response.data[0].crimes;
         })
         .catch((error) => {
@@ -352,6 +356,7 @@ export default {
   beforeMount: function () {
     this.getFileData();
     this.getCrimes();
+    console.log(this.propsIsadmin);
   },
 
   mounted: function () {}

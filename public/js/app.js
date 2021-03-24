@@ -2427,9 +2427,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ["propsFileid"],
+  props: ["propsFileid", "propsIsadmin"],
   data: function data() {
     return {
       file_number: "",
@@ -2519,6 +2523,7 @@ __webpack_require__.r(__webpack_exports__);
   beforeMount: function beforeMount() {
     this.getFileData();
     this.getCrimes();
+    console.log(this.propsIsadmin);
   },
   mounted: function mounted() {}
 });
@@ -2567,7 +2572,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['propsFiles'],
   data: function data() {
     return {
       files: []
@@ -2599,11 +2603,20 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (error) {
         console.log(error);
       });
+    },
+    getFiles: function getFiles() {
+      var _this2 = this;
+
+      axios.get('/api/files').then(function (response) {
+        console.log(response.data);
+        _this2.files = response.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   },
   mounted: function mounted() {
-    this.files = this.propsFiles;
-    console.log(this.propsFiles);
+    this.getFiles();
   }
 });
 
@@ -2784,7 +2797,7 @@ var bootbox = __webpack_require__(/*! bootbox */ "./node_modules/bootbox/bootbox
     getCourt: function getCourt() {
       var _this2 = this;
 
-      axios.get('/court').then(function (response) {
+      axios.post('/api/court/random').then(function (response) {
         _this2.court = response.data;
       })["catch"](function (error) {
         console.log(error);
@@ -41735,77 +41748,143 @@ var render = function() {
                     ])
                   ]),
                   _vm._v(" "),
-                  _c("div", { staticClass: "form-row" }, [
-                    _vm._m(15, true),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group col-md-5" }, [
-                      _c(
-                        "select",
-                        {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.type_update,
-                              expression: "type_update"
-                            }
-                          ],
-                          on: {
-                            change: [
-                              function($event) {
-                                var $$selectedVal = Array.prototype.filter
-                                  .call($event.target.options, function(o) {
-                                    return o.selected
-                                  })
-                                  .map(function(o) {
-                                    var val = "_value" in o ? o._value : o.value
-                                    return val
-                                  })
-                                _vm.type_update = $event.target.multiple
-                                  ? $$selectedVal
-                                  : $$selectedVal[0]
-                              },
-                              function($event) {
-                                return _vm.onChange(trial.court)
-                              }
-                            ]
-                          }
-                        },
-                        [
-                          _c("option", [_vm._v("Amana cauza")]),
-                          _vm._v(" "),
-                          _c("option", [_vm._v("Hotarare")])
-                        ]
-                      )
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _vm.type_update === "Amana cauza"
+                  _vm.propsIsadmin
                     ? _c("div", [
                         _c("div", { staticClass: "form-row" }, [
-                          _vm._m(16, true),
+                          _vm._m(15, true),
                           _vm._v(" "),
-                          _c(
-                            "div",
-                            { staticClass: "form-group col-md-5" },
-                            [
-                              _c("datepicker-component", {
-                                attrs: { language: _vm.ro },
-                                model: {
-                                  value: _vm.newtrial_date,
-                                  callback: function($$v) {
-                                    _vm.newtrial_date = $$v
-                                  },
-                                  expression: "newtrial_date"
+                          _c("div", { staticClass: "form-group col-md-5" }, [
+                            _c(
+                              "select",
+                              {
+                                directives: [
+                                  {
+                                    name: "model",
+                                    rawName: "v-model",
+                                    value: _vm.type_update,
+                                    expression: "type_update"
+                                  }
+                                ],
+                                on: {
+                                  change: [
+                                    function($event) {
+                                      var $$selectedVal = Array.prototype.filter
+                                        .call($event.target.options, function(
+                                          o
+                                        ) {
+                                          return o.selected
+                                        })
+                                        .map(function(o) {
+                                          var val =
+                                            "_value" in o ? o._value : o.value
+                                          return val
+                                        })
+                                      _vm.type_update = $event.target.multiple
+                                        ? $$selectedVal
+                                        : $$selectedVal[0]
+                                    },
+                                    function($event) {
+                                      return _vm.onChange(trial.court)
+                                    }
+                                  ]
                                 }
-                              })
-                            ],
-                            1
-                          )
+                              },
+                              [
+                                _c("option", [_vm._v("Amana cauza")]),
+                                _vm._v(" "),
+                                _c("option", [_vm._v("Hotarare")])
+                              ]
+                            )
+                          ])
                         ]),
                         _vm._v(" "),
+                        _vm.type_update === "Amana cauza"
+                          ? _c("div", [
+                              _c("div", { staticClass: "form-row" }, [
+                                _vm._m(16, true),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "form-group col-md-5" },
+                                  [
+                                    _c("datepicker-component", {
+                                      attrs: { language: _vm.ro },
+                                      model: {
+                                        value: _vm.newtrial_date,
+                                        callback: function($$v) {
+                                          _vm.newtrial_date = $$v
+                                        },
+                                        expression: "newtrial_date"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "form-row" }, [
+                                _vm._m(17, true),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "form-group col-md-5" },
+                                  [
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.nextCourt.name,
+                                          expression: "nextCourt.name"
+                                        }
+                                      ],
+                                      staticClass: "form-control",
+                                      attrs: { type: "text" },
+                                      domProps: { value: _vm.nextCourt.name },
+                                      on: {
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.$set(
+                                            _vm.nextCourt,
+                                            "name",
+                                            $event.target.value
+                                          )
+                                        }
+                                      }
+                                    })
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "div",
+                                  { staticClass: "form-group col-md-2" },
+                                  [
+                                    _c(
+                                      "button",
+                                      {
+                                        staticClass: "btn btn-secondary",
+                                        attrs: {
+                                          disabled: _vm.newCourtIsClicked,
+                                          type: "button"
+                                        },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.newCourt()
+                                          }
+                                        }
+                                      },
+                                      [_vm._v("Refuza")]
+                                    )
+                                  ]
+                                )
+                              ])
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
                         _c("div", { staticClass: "form-row" }, [
-                          _vm._m(17, true),
+                          _vm._m(18, true),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group col-md-5" }, [
                             _c("input", {
@@ -41813,123 +41892,72 @@ var render = function() {
                                 {
                                   name: "model",
                                   rawName: "v-model",
-                                  value: _vm.nextCourt.name,
-                                  expression: "nextCourt.name"
+                                  value: _vm.solution,
+                                  expression: "solution"
                                 }
                               ],
                               staticClass: "form-control",
                               attrs: { type: "text" },
-                              domProps: { value: _vm.nextCourt.name },
+                              domProps: { value: _vm.solution },
                               on: {
                                 input: function($event) {
                                   if ($event.target.composing) {
                                     return
                                   }
-                                  _vm.$set(
-                                    _vm.nextCourt,
-                                    "name",
-                                    $event.target.value
-                                  )
+                                  _vm.solution = $event.target.value
                                 }
                               }
                             })
-                          ]),
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-row" }, [
+                          _vm._m(19, true),
                           _vm._v(" "),
-                          _c("div", { staticClass: "form-group col-md-2" }, [
+                          _c("div", { staticClass: "form-group col-md-5" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.doc,
+                                  expression: "doc"
+                                }
+                              ],
+                              staticClass: "form-control",
+                              attrs: { type: "text" },
+                              domProps: { value: _vm.doc },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.doc = $event.target.value
+                                }
+                              }
+                            })
+                          ])
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-row" }, [
+                          _c("div", { staticClass: "form-group" }, [
                             _c(
                               "button",
                               {
                                 staticClass: "btn btn-secondary",
-                                attrs: {
-                                  disabled: _vm.newCourtIsClicked,
-                                  type: "button"
-                                },
+                                attrs: { type: "button" },
                                 on: {
                                   click: function($event) {
-                                    return _vm.newCourt()
+                                    return _vm.updateTrials(trial.id)
                                   }
                                 }
                               },
-                              [_vm._v("Refuza")]
+                              [_vm._v("Actualizeaza")]
                             )
                           ])
                         ])
                       ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "form-row" }, [
-                    _vm._m(18, true),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group col-md-5" }, [
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.solution,
-                            expression: "solution"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "text" },
-                        domProps: { value: _vm.solution },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.solution = $event.target.value
-                          }
-                        }
-                      })
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "form-row" }, [
-                    _vm._m(19, true),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group col-md-5" }, [
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.doc,
-                            expression: "doc"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "text" },
-                        domProps: { value: _vm.doc },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.doc = $event.target.value
-                          }
-                        }
-                      })
-                    ])
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "form-row" }, [
-                    _c("div", { staticClass: "form-group" }, [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-secondary",
-                          attrs: { type: "button" },
-                          on: {
-                            click: function($event) {
-                              return _vm.updateTrials(trial.id)
-                            }
-                          }
-                        },
-                        [_vm._v("Actualizeaza")]
-                      )
-                    ])
-                  ])
+                    : _vm._e()
                 ])
               : _vm._e(),
             _vm._v(" "),

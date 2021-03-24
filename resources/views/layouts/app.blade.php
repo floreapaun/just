@@ -59,6 +59,7 @@
                                 Sedinte
                             </a>
                         </li>
+                        @auth
                         <li class="nav-item {{ Request::routeIs('courts_panel') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ url('/courts/panel') }}">
                                 Complete
@@ -69,6 +70,7 @@
                                 Adauga dosar
                             </a>
                         </li>
+                        @endauth
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -77,16 +79,16 @@
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">Autentificare</a>
+                                    <a class="nav-link" href="/">Autentificare</a>
                                 </li>
                             @endif
                             
                             @if (Route::has('register'))
-				<!--
+                                <!--
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
-				-->
+                                -->
                             @endif
                         @else
                             <li class="nav-item dropdown">
