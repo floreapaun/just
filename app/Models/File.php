@@ -14,6 +14,7 @@ class File extends Model
     protected $fillable = [
         'user_id',
         'date_registered',
+        'date_appeal',
     ];
 
     public function user()

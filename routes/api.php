@@ -23,12 +23,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/file/data', [FileController::class, 'data']);
+Route::post('/file/appeal', [FileController::class, 'appeal']);
 Route::post('/file/search', [FileController::class, 'search']);
+Route::get('/files', [FileController::class, 'index']);
+
 Route::post('/trial/update', [TrialController::class, 'update']);
 Route::post('/crimes/index', [CrimeController::class, 'index']);
 Route::post('/courts/index', [CourtController::class, 'index']);
 Route::post('/trials/courts', [CourtController::class, 'at_date']);
-Route::get('/files', [FileController::class, 'index']);
 
 Route::group(['prefix' => 'court'], function() {
     Route::post('/update', [CourtController::class, 'update']);

@@ -2431,6 +2431,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ["propsFileid", "propsIsadmin"],
@@ -2442,6 +2472,8 @@ __webpack_require__.r(__webpack_exports__);
       doc: "",
       pickerdate: new Date(),
       newtrial_date: new Date(),
+      hasAppeal: false,
+      date_appeal: new Date(),
       nextCourt: {},
       newCourtIsClicked: false,
       courts: [],
@@ -2462,6 +2494,12 @@ __webpack_require__.r(__webpack_exports__);
         _this.pickerdate = response.data[0].date_registered;
         var parts = response.data[0].date_registered.split("-");
         _this.file_number = _this.propsFileid + "/183/" + parts[0];
+
+        if (response.data[0].date_appeal) {
+          _this.hasAppeal = true;
+          _this.date_appeal = response.data[0].date_appeal;
+        }
+
         _this.parts = response.data[0].parts;
         _this.trials = response.data[0].trials;
         _this.fileCrimes = response.data[0].crimes;
@@ -2477,6 +2515,18 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (error) {
         console.log(error);
       });
+    },
+    getPartsNames: function getPartsNames() {
+      console.log("getPartsNames() got called!");
+      var str = '';
+      var i;
+
+      for (i = 0; i < this.parts.length - 1; i++) {
+        str += this.parts[i].name, str += ", ";
+      }
+
+      str += this.parts[i].name;
+      return str;
     },
     timePassed: function timePassed(date) {
       if (new Date().getTime() >= new Date(date).getTime()) return true;
@@ -2498,8 +2548,29 @@ __webpack_require__.r(__webpack_exports__);
       });
       this.newCourtIsClicked = true;
     },
-    updateTrials: function updateTrials(trial_id) {
+    sendAppeal: function sendAppeal() {
       var _this4 = this;
+
+      axios.post("/api/file/appeal", {
+        "date_appeal": this.date_appeal,
+        "id": this.propsFileid
+      }).then(function (response) {
+        _this4.getFileData();
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    changeFormat: function changeFormat(fulldate) {
+      var d = new Date(fulldate),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+      return [day, month, year].join('/');
+    },
+    updateTrials: function updateTrials(trial_id) {
+      var _this5 = this;
 
       var data = {
         id: trial_id,
@@ -2510,11 +2581,11 @@ __webpack_require__.r(__webpack_exports__);
         solution: this.solution
       };
       axios.post("/api/trial/update", data).then(function (response) {
-        _this4.trials = response.data;
-        _this4.type_update = "";
-        _this4.doc = '';
-        _this4.solution = '';
-        _this4.newCourtIsClicked = false;
+        _this5.trials = response.data;
+        _this5.type_update = "";
+        _this5.doc = '';
+        _this5.solution = '';
+        _this5.newCourtIsClicked = false;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -41708,14 +41779,76 @@ var render = function() {
                         }
                       })
                     ])
-                  ])
+                  ]),
+                  _vm._v(" "),
+                  _c("hr"),
+                  _vm._v(" "),
+                  _c("h2", [_vm._v("Cai atac")]),
+                  _vm._v(" "),
+                  _vm.hasAppeal
+                    ? _c("div", [
+                        _c("table", [
+                          _vm._m(13, true),
+                          _vm._v(" "),
+                          _c("tr", [
+                            _c("td", [
+                              _vm._v(_vm._s(_vm.changeFormat(_vm.date_appeal)))
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _c("span", [_vm._v(_vm._s(_vm.getPartsNames()))])
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v("Apel")])
+                          ])
+                        ])
+                      ])
+                    : _c("div", [
+                        _c("div", { staticClass: "form-row" }, [
+                          _vm._m(14, true),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "form-group col-md-5" },
+                            [
+                              _c("datepicker-component", {
+                                attrs: { language: _vm.ro },
+                                model: {
+                                  value: _vm.date_appeal,
+                                  callback: function($$v) {
+                                    _vm.date_appeal = $$v
+                                  },
+                                  expression: "date_appeal"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group col-md-2" }, [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-secondary",
+                                attrs: { type: "button" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.sendAppeal()
+                                  }
+                                }
+                              },
+                              [_vm._v("Trimite")]
+                            )
+                          ])
+                        ])
+                      ])
                 ])
               : _vm._e(),
             _vm._v(" "),
             trial.type === "waiting" && _vm.timePassed(trial.date)
               ? _c("div", [
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(13, true),
+                    _vm._m(15, true),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -41737,7 +41870,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(14, true),
+                    _vm._m(16, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -41751,7 +41884,7 @@ var render = function() {
                   _vm.propsIsadmin
                     ? _c("div", [
                         _c("div", { staticClass: "form-row" }, [
-                          _vm._m(15, true),
+                          _vm._m(17, true),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group col-md-5" }, [
                             _c(
@@ -41801,7 +41934,7 @@ var render = function() {
                         _vm.type_update === "Amana cauza"
                           ? _c("div", [
                               _c("div", { staticClass: "form-row" }, [
-                                _vm._m(16, true),
+                                _vm._m(18, true),
                                 _vm._v(" "),
                                 _c(
                                   "div",
@@ -41823,7 +41956,7 @@ var render = function() {
                               ]),
                               _vm._v(" "),
                               _c("div", { staticClass: "form-row" }, [
-                                _vm._m(17, true),
+                                _vm._m(19, true),
                                 _vm._v(" "),
                                 _c(
                                   "div",
@@ -41884,7 +42017,7 @@ var render = function() {
                           : _vm._e(),
                         _vm._v(" "),
                         _c("div", { staticClass: "form-row" }, [
-                          _vm._m(18, true),
+                          _vm._m(20, true),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group col-md-5" }, [
                             _c("input", {
@@ -41912,7 +42045,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("div", { staticClass: "form-row" }, [
-                          _vm._m(19, true),
+                          _vm._m(21, true),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group col-md-5" }, [
                             _c("input", {
@@ -41964,7 +42097,7 @@ var render = function() {
             trial.type === "waiting" && !_vm.timePassed(trial.date)
               ? _c("div", [
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(20, true),
+                    _vm._m(22, true),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -41982,11 +42115,9 @@ var render = function() {
                         })
                       ],
                       1
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "form-row" }, [
-                    _vm._m(21, true),
+                    ),
+                    _vm._v(" "),
+                    _vm._m(23, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -42146,6 +42277,26 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group col-md-2" }, [
       _c("label", [_vm._v("Document")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("tr", [
+      _c("th", [_vm._v("Data declarare")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Parte declaranta")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Cale de atac")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group col-md-2" }, [
+      _c("label", [_vm._v("Data declarare")])
     ])
   },
   function() {

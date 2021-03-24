@@ -145,6 +145,38 @@
                 <input type="text" v-model="trial.document" class="form-control" disabled>
               </div>
             </div>
+            
+            <hr>
+        
+            <h2>Cai atac</h2>
+            <div v-if="hasAppeal">
+              <table>
+                <tr>
+                  <th>Data declarare</th>
+                  <th>Parte declaranta</th>
+                  <th>Cale de atac</th>
+                </tr>
+                <tr>
+                  <td>{{ changeFormat(date_appeal) }}</td>
+                  <td><span>{{ getPartsNames() }}</span></td>
+                  <td>Apel</td>
+                </tr>
+              </table>
+            </div>
+            <div v-else>
+              <div class="form-row">
+                <div class="form-group col-md-2">
+                  <label>Data declarare</label>
+                </div>
+                <div class="form-group col-md-5">
+                  <datepicker-component v-model="date_appeal" :language='ro'>
+                  </datepicker-component>
+                </div>
+                <div class="form-group col-md-2">
+                  <button @click="sendAppeal()" type="button" class="btn btn-secondary">Trimite</button>
+                </div>
+              </div>
+            </div>
           </div>
           <div v-if="trial.type === 'waiting' && timePassed(trial.date)">
             <div class="form-row">
@@ -235,8 +267,6 @@
                 <datepicker-component v-model="trial.date" :language='ro' disabled>
                 </datepicker-component>
               </div>
-            </div>
-            <div class="form-row">
               <div class="form-group col-md-2">
                 <label>Complet</label>
               </div>
@@ -265,6 +295,8 @@ export default {
       doc: "",
       pickerdate: new Date(),
       newtrial_date: new Date(),
+      hasAppeal: false,
+      date_appeal: new Date(),
       nextCourt: {},
       newCourtIsClicked: false,
       courts: [],
@@ -286,6 +318,11 @@ export default {
           let parts = response.data[0].date_registered.split("-");
           this.file_number = this.propsFileid + "/183/" + parts[0];
 
+          if (response.data[0].date_appeal) {
+            this.hasAppeal = true;
+            this.date_appeal = response.data[0].date_appeal;
+          }
+
           this.parts = response.data[0].parts;
           this.trials = response.data[0].trials;
           this.fileCrimes = response.data[0].crimes;
@@ -304,10 +341,20 @@ export default {
           console.log(error);
         });
     },
+    
+    getPartsNames () {
+      console.log("getPartsNames() got called!");
+      let str = '';
+      let i;
+      for (i = 0; i < this.parts.length - 1; i++)
+          str += this.parts[i].name, str += ", ";
+      str += this.parts[i].name;
+      return str;
+    },
 
     timePassed(date) {
       if (new Date().getTime() >= new Date(date).getTime()) return true;
-      return false;
+        return false;
     },
 
     onChange (court) {
@@ -327,6 +374,31 @@ export default {
       this.newCourtIsClicked = true;
     },
 
+    sendAppeal() {
+      axios
+        .post("/api/file/appeal", { "date_appeal": this.date_appeal, "id": this.propsFileid })
+        .then((response) => {
+            this.getFileData();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    changeFormat(fulldate) {
+      let d = new Date(fulldate),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+      if (month.length < 2) 
+	  month = '0' + month;
+      if (day.length < 2) 
+	  day = '0' + day;
+
+      return [day, month, year].join('/');
+    },
+    
     updateTrials(trial_id) {
       let data = {
         id: trial_id,

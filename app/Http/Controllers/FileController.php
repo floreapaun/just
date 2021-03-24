@@ -55,6 +55,13 @@ class FileController extends Controller
         return File::orderBy('date_registered', 'DESC')->with('crimes')->get();
     }
 
+    public function appeal(Request $request)
+    {
+       return File::where('id', $request->id)
+              ->update(['date_appeal' => date('Y-m-d', strtotime($request->date_appeal))]);
+    }
+        
+
     /**
      * Show the form for creating a new resource.
      *
