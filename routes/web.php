@@ -15,25 +15,30 @@ use App\Http\Controllers\CourtController;
 |
 */
 
+Auth::routes();
+
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
-Route::get('/files/store', function () {
-    return view('files.store');
-})->name('file_store');
-Route::get('/file/{id}', function($id) {
+Route::get('/file/{id}', function ($id) {
     return view('file', ['id' => $id]);
 })->name('file');
 Route::get('/courts', function () {
     return view('courts.index');
 })->name('courts'); 
-Route::get('/courts/panel', function () {
-    return view('courts.panel');
-})->name('courts_panel');
-Auth::routes();
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/files', [FileController::class, 'index'])->name('files'); 
-Route::get('/court', [CourtController::class, 'random']);
-Route::prefix('/file')->group( function() {
-    Route::post('/store', [FileController::class, 'store']);
+Route::get('/files', function () {
+    return view('files.index');
+})->name('files'); 
+
+
+Route::group(['middleware' => ['auth']], function() {
+    Route::get('/files/store', function () {
+        return view('files.store');
+    })->name('file_store');
+    Route::get('/courts/panel', function () {
+        return view('courts.panel');
+    })->name('courts_panel');
+    Route::prefix('/file')->group( function() {
+        Route::post('/store', [FileController::class, 'store']);
+    });
 });

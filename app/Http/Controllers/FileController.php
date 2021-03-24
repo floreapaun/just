@@ -52,9 +52,7 @@ class FileController extends Controller
 
     public function index()
     {
-        return view('files.index')
-	       ->withFiles(File::orderBy('date_registered', 'DESC')
-               ->with('crimes')->get());
+        return File::orderBy('date_registered', 'DESC')->with('crimes')->get();
     }
 
     /**
@@ -105,7 +103,7 @@ class FileController extends Controller
         $newTrial->date = date('Y-m-d', strtotime($request->date));
         $newTrial->save();
         
-        return redirect()->route('home');
+        return redirect()->route('files');
 
     }
 

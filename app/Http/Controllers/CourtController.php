@@ -26,12 +26,11 @@ class CourtController extends Controller
 
     public function at_date(Request $request)
     {
- 
-	return Court::where('active', true)->with(['files' => function ($query) use($request) {
-	           return $query->whereHas('trials', function ($query) use($request) {
-		       return $query->where([['type', 'waiting'], ['date', date('Y-m-d', strtotime($request->date))]]);
-		   })->with('crimes')->get();
-	       }])->get();
+        return Court::where('active', true)->with(['files' => function ($query) use($request) {
+                   return $query->whereHas('trials', function ($query) use($request) {
+                   return $query->where([['type', 'waiting'], ['date', date('Y-m-d', strtotime($request->date))]]);
+               })->with('crimes')->get();
+               }])->get();
     }
 
     public function random()

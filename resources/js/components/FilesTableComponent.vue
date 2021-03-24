@@ -30,8 +30,6 @@
 
 <script>
 export default {
-  props: ['propsFiles'],
-
   data: function() {
     return {
       files: [] 
@@ -60,17 +58,25 @@ export default {
       console.log(event.target.value);
       axios.post('/api/file/search', { term: event.target.value })
         .then( response => {
-	    console.log(response.data);
-	    this.files = response.data;
+          console.log(response.data);
+          this.files = response.data;
         }).catch( error => {
-            console.log(error);
+          console.log(error);
+        });
+    },
+    getFiles() {
+      axios.get('/api/files')
+        .then( response => {
+          console.log(response.data);
+          this.files = response.data;
+        }).catch( error => {
+          console.log(error);
         });
     }
   }, 
 
   mounted() {
-	this.files = this.propsFiles;
-        console.log(this.propsFiles)
+	this.getFiles();
   }
 }
 </script>

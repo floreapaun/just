@@ -26,10 +26,13 @@ Route::post('/file/data', [FileController::class, 'data']);
 Route::post('/file/search', [FileController::class, 'search']);
 Route::post('/trial/update', [TrialController::class, 'update']);
 Route::post('/crimes/index', [CrimeController::class, 'index']);
-Route::post('courts/index', [CourtController::class, 'index']);
+Route::post('/courts/index', [CourtController::class, 'index']);
 Route::post('/trials/courts', [CourtController::class, 'at_date']);
-Route::prefix('/court')->group(function() {
+Route::get('/files', [FileController::class, 'index']);
+
+Route::group(['prefix' => 'court'], function() {
     Route::post('/update', [CourtController::class, 'update']);
+    Route::post('/random', [CourtController::class, 'random']);
     Route::post('/store', [CourtController::class, 'store']);
     Route::post('/remove', [CourtController::class, 'destroy']);
     Route::post('/entry', [CourtController::class, 'entry']);
