@@ -74,7 +74,7 @@
 
       <div class="form-row">
         <div class="form-group col-md-2">
-          <label>Data judecarii</label>
+          <label>Termen de judecata</label>
         </div>
         <div class="form-group col-md-5">
           <datepicker-component v-model="pickerdate" :language='ro'>

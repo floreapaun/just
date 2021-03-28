@@ -49,18 +49,58 @@ class FileController extends Controller
 	
     }  
 
+    public function revoked_search(Request $request) 
+    {
+        if ($request->term === "")
+          return File::whereNotNull('date_revoke')->with('crimes')->get();
+
+        //search by number
+        $pieces_term = explode("/", $request->term);
+        if (count($pieces_term) === 3) 
+        {
+            $file = File::whereNotNull('date_revoke')->where('id', $pieces_term[0])->with('crimes')->get();
+            if (count($file)) 
+            {
+            $date_pieces = explode("-", $file[0]->date_registered);
+            if ($pieces_term[2] === $date_pieces[0])
+                return $file;
+            }
+        }
+            
+        //search by part name
+        $files = File::whereHas('parts', function ($query) use($request) {
+                 return $query->where('name', 'like', '%' . $request->term . '%');
+             })->whereNotNull('date_revoke')->with('crimes')->get();
+        if (count($files))
+            return $files;
+
+        //search by crime 
+        return File::whereHas('crimes', function ($query) use($request) {
+            return $query->where('name', 'like', '%' . $request->term . '%');
+        })->whereNotNull('date_revoke')->with('crimes')->get();
+	
+    }  
+
 
     public function index()
     {
         return File::orderBy('date_registered', 'DESC')->with('crimes')->get();
     }
 
-    public function appeal(Request $request)
+    public function revoke(Request $request)
     {
        return File::where('id', $request->id)
-              ->update(['date_appeal' => date('Y-m-d', strtotime($request->date_appeal))]);
+           ->update([
+               'date_revoke' => date('Y-m-d', strtotime($request->revoke_date)),
+               'revoke_parts' => $request->revoke_parts,
+               'revoke_type' => $request->revoke_type,
+           ]);
     }
-        
+
+    public function revoked_index(Request $request)
+    {
+       return File::orderBy('date_registered', 'DESC')->whereNotNull('date_revoke')->with('crimes')->get();
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -88,7 +128,7 @@ class FileController extends Controller
 
         $newFile = new File;
         $newFile->user_id = Auth::id();
-        $newFile->date_registered = date('Y-m-d', strtotime($request->date));
+        $newFile->date_registered = date('Y-m-d');
         $newFile->save();
         
         foreach($request->parts as $part)

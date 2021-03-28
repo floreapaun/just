@@ -6,7 +6,7 @@
           <label>Nr. unic (nr. format vechi)</label>
         </div>
         <div class="form-group col-md-6">
-          <input v-model="file_number" type="text" class="form-control" disabled>
+          <input v-model="fileNumber" type="text" class="form-control" disabled>
         </div>
       </div>
       <div class="form-row">
@@ -28,20 +28,20 @@
 
       <h2>Obiecte</h2>
       <div class="crimes">	
-	<div v-for="(fileCrime, index) in fileCrimes" :key="index" class="form-row">
-	  <div class="form-group col-md-6 my-auto">
-	    <select v-model="fileCrime.name" disabled>
-	      <option v-for="crime in crimes">{{ crime.name }}</option>
-	    </select>
-	  </div>
-	</div>
+        <div v-for="(crime, index) in file.crimes" :key="index" class="form-row">
+          <div class="form-group col-md-6 my-auto">
+            <select v-model="crime.name" disabled>
+              <option v-for="c in crimesList">{{ c.name }}</option>
+            </select>
+          </div>
+        </div>
       </div>
  
       <hr>
 
       <h2>Parti</h2>
       <div class="parts">
-        <div class="form-row" v-for="(part, index) in parts" :key="index">
+        <div class="form-row" v-for="(part, index) in file.parts" :key="index">
           <div class="form-group col-md-6">
             <label>Nume</label>
             <input v-model="part.name" :name="`parts[${index}][name]`" type="text" class="form-control" placeholder="Nume" disabled>
@@ -59,11 +59,13 @@
       </div>
       <h1>Sedinte</h1>
       <div class="trials">
-        <div v-for="(trial, index) in trials" :key="index">
+        <div v-for="(trial, index) in file.trials" :key="index">
+        
+          <!-- start continued -->
           <div v-if="trial.type === 'continued'">
             <div class="form-row">
               <div class="form-group col-md-2">
-                <label>Data judecarii</label>
+                <label>Termen de judecata</label>
               </div>
               <div class="form-group col-md-5">
                 <datepicker-component v-model="trial.date" :language='ro' disabled>
@@ -103,10 +105,13 @@
               </div>
             </div>
           </div>
+          <!-- end continued -->
+
+          <!-- start ended -->  
           <div v-if="trial.type === 'ended'">
             <div class="form-row">
               <div class="form-group col-md-2">
-                <label>Data judecarii</label>
+                <label>Termen de judecata</label>
               </div>
               <div class="form-group col-md-5">
                 <datepicker-component v-model="trial.date" :language='ro' disabled>
@@ -149,7 +154,7 @@
             <hr>
         
             <h2>Cai atac</h2>
-            <div v-if="hasAppeal">
+            <div v-if="hasRevoke">
               <table>
                 <tr>
                   <th>Data declarare</th>
@@ -157,9 +162,9 @@
                   <th>Cale de atac</th>
                 </tr>
                 <tr>
-                  <td>{{ changeFormat(date_appeal) }}</td>
-                  <td><span>{{ getPartsNames() }}</span></td>
-                  <td>Apel</td>
+                  <td>{{ changeFormat(file.date_revoke) }}</td>
+                  <td><span>{{ file.revoke_parts }}</span></td>
+                  <td>{{ file.revoke_type }}</td>
                 </tr>
               </table>
             </div>
@@ -169,19 +174,59 @@
                   <label>Data declarare</label>
                 </div>
                 <div class="form-group col-md-5">
-                  <datepicker-component v-model="date_appeal" :language='ro'>
+                  <datepicker-component v-model="revokeDate" :language='ro'>
                   </datepicker-component>
                 </div>
+              </div>
+              <div v-for="part in file.parts" class="form-row">
                 <div class="form-group col-md-2">
-                  <button @click="sendAppeal()" type="button" class="btn btn-secondary">Trimite</button>
+                  <label>Nume parte</label>
+                </div>
+                <div class="form-group col-md-6">
+                  <input v-model="part.name" type="text" class="form-control" disabled>
+                </div>
+                <div class="form-group col-md-2">
+                  <input type="checkbox" :value="part.name" v-model="checkedParts">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-2">
+                  <label>Nume parte</label>
+                </div>
+                <div class="form-group col-md-6">
+                  <input type="text" value ="Parchetul de pe langa ICCJ - Directia Nationala Anticoruptie" 
+                    class="form-control" disabled>
+                </div>
+                <div class="form-group col-md-2">
+                  <input type="checkbox" value="Parchetul de pe langa ICCJ - Directia Nationala Anticoruptie" 
+                    v-model="checkedParts">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-2">
+                  <label>Tip</label>
+                </div>
+                <div class="form-group col-md-2">
+                  <select v-model="revokeType">
+                    <option>Apel</option>
+                    <option>Contestatie</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-2">
+                  <button @click="sendRevoke()" type="button" class="btn btn-secondary">Trimite</button>
                 </div>
               </div>
             </div>
           </div>
+          <!-- end ended -->           
+   
+          <!-- start waiting, timePassed -->
           <div v-if="trial.type === 'waiting' && timePassed(trial.date)">
             <div class="form-row">
               <div class="form-group col-md-2">
-                <label>Data judecarii</label>
+                <label>Termen de judecata</label>
               </div>
               <div class="form-group col-md-5">
                 <datepicker-component v-model="trial.date" :language='ro' disabled>
@@ -197,26 +242,26 @@
               </div>
             </div>
 
-            <div v-if="propsIsadmin">
+            <div v-if="propsIsAdmin">
               <div class="form-row">
                 <div class="form-group col-md-2">
                   <label>Solutie</label>
                 </div>
                 <div class="form-group col-md-5">
-                  <select v-model="type_update" @change="onChange(trial.court)">
+                  <select v-model="updateType" @change="onChange(trial.court)">
                     <option>Amana cauza</option>
                     <option>Hotarare</option>
                   </select>
                 </div>
               </div>
 
-              <div v-if="type_update === 'Amana cauza'">
+              <div v-if="updateType === 'Amana cauza'">
                 <div class="form-row">
                   <div class="form-group col-md-2">
                     <label>Data rejudecarii</label>
                   </div>
                   <div class="form-group col-md-5">
-                    <datepicker-component v-model="newtrial_date" :language='ro'>
+                    <datepicker-component v-model="newTrialDate" :language='ro'>
                     </datepicker-component>
                   </div>
                 </div>
@@ -247,7 +292,7 @@
                   <label>Document</label>
                 </div>
                 <div class="form-group col-md-5">
-                  <input type="text" v-model="doc" class="form-control">
+                  <input type="text" v-model="document" class="form-control">
                 </div>
               </div>
               <div class="form-row">
@@ -257,16 +302,20 @@
               </div>
             </div>
           </div>
+          <!-- end waiting, timePassed -->
 
+          <!-- start waiting, !timePassed -->
           <div v-if="trial.type === 'waiting' && !timePassed(trial.date)">
             <div class="form-row">
               <div class="form-group col-md-2">
-                <label>Data judecarii</label>
+                <label>Termen de judecata</label>
               </div>
               <div class="form-group col-md-5">
                 <datepicker-component v-model="trial.date" :language='ro' disabled>
                 </datepicker-component>
               </div>
+            </div>
+            <div class="form-row">
               <div class="form-group col-md-2">
                 <label>Complet</label>
               </div>
@@ -275,6 +324,8 @@
               </div>
             </div>
           </div>
+          <!-- end waiting, !timePassed -->
+
         </div>
       </div>
       <hr>
@@ -285,70 +336,66 @@
 <script>
 import { ro } from "vuejs-datepicker/dist/locale";
 export default {
-  props: ["propsFileid", "propsIsadmin"],
+  props: ["propsFileId", "propsIsAdmin"],
 
   data: function () {
     return {
-      file_number: "",
-      type_update: "",
+      file: "",
+      fileNumber: "",
+      updateType: "",
       solution: "",
-      doc: "",
-      pickerdate: new Date(),
-      newtrial_date: new Date(),
-      hasAppeal: false,
-      date_appeal: new Date(),
+      document: "",
+      newTrialDate: new Date(),
+      hasRevoke: false,
+      revokeDate: new Date(),
+      revokeType: "",
       nextCourt: {},
       newCourtIsClicked: false,
-      courts: [],
-      fileCrimes: [],
-      crimes: [],
-      parts: [],
-      trials: [],
+      crimesList: [],
+      checkedParts: [],
       ro: ro,
     };
   },
 
   methods: {
-    getFileData () {
+    getFileData() {
       axios
-        .post("/api/file/data", { id: this.propsFileid })
+        .post("/api/file/data", { id: this.propsFileId })
         .then((response) => {
-          this.pickerdate = response.data[0].date_registered;
 
-          let parts = response.data[0].date_registered.split("-");
-          this.file_number = this.propsFileid + "/183/" + parts[0];
+          this.computeFileNumber(response.data[0].date_registered);
 
-          if (response.data[0].date_appeal) {
-            this.hasAppeal = true;
-            this.date_appeal = response.data[0].date_appeal;
-          }
+          if (response.data[0].date_revoke) 
+            this.hasRevoke = true;
 
-          this.parts = response.data[0].parts;
-          this.trials = response.data[0].trials;
-          this.fileCrimes = response.data[0].crimes;
+          this.file = response.data[0];
+
         })
         .catch((error) => {
           console.log(error);
         });
     },
+    
+    computeFileNumber(dateRegistered) {
+      let parts = dateRegistered.split("-");
+      this.fileNumber = this.propsFileId + "/183/" + parts[0];
+    },
 
     getCrimes () {
       axios.post('/api/crimes/index')
         .then( response => {
-          this.crimes = response.data;
+          this.crimesList = response.data;
         })
         .catch( error => {
           console.log(error);
         });
     },
     
-    getPartsNames () {
-      console.log("getPartsNames() got called!");
-      let str = '';
-      let i;
-      for (i = 0; i < this.parts.length - 1; i++)
-          str += this.parts[i].name, str += ", ";
-      str += this.parts[i].name;
+    getCheckedParts () {
+      let i, str = '';
+      for (i = 0; i < this.checkedParts.length - 1; i++)
+          str += this.checkedParts[i] + ", ";
+      str += this.checkedParts[i];
       return str;
     },
 
@@ -374,11 +421,19 @@ export default {
       this.newCourtIsClicked = true;
     },
 
-    sendAppeal() {
+    sendRevoke() {
+    
+      let data = {
+       "id": this.propsFileId,
+       "revoke_date": this.revokeDate,
+       "revoke_parts": this.getCheckedParts(),
+       "revoke_type": this.revokeType, 
+      }; 
+      
       axios
-        .post("/api/file/appeal", { "date_appeal": this.date_appeal, "id": this.propsFileid })
+        .post("/api/file/revoke", data)
         .then((response) => {
-            this.getFileData();
+          this.getFileData();
         })
         .catch((error) => {
           console.log(error);
@@ -403,19 +458,19 @@ export default {
       let data = {
         id: trial_id,
         court_id: this.nextCourt.id,
-        type: this.type_update === "Amana cauza" ? "continued" : "ended",
-        newtrial_date: this.newtrial_date,
-        document: this.doc,
+        type: this.updateType === "Amana cauza" ? "continued" : "ended",
+        newtrial_date: this.newTrialDate,
+        document: this.document,
         solution: this.solution,
       };
 
       axios
         .post("/api/trial/update", data)
         .then((response) => {
-          this.trials = response.data;
+          this.file.trials = response.data;
 
-          this.type_update = "";
-          this.doc = '';
+          this.updateType = "";
+          this.document = '';
           this.solution = '';
           this.newCourtIsClicked = false;
         })
@@ -428,7 +483,6 @@ export default {
   beforeMount: function () {
     this.getFileData();
     this.getCrimes();
-    console.log(this.propsIsadmin);
   },
 
   mounted: function () {}

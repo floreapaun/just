@@ -59,6 +59,11 @@
                                 Sedinte
                             </a>
                         </li>
+                        <li class="nav-item {{ Request::routeIs('revoked_files') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('/revoked_files') }}">
+                                Apeluri sau contestatii
+                            </a>
+                        </li>
                         @auth
                         <li class="nav-item {{ Request::routeIs('courts_panel') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ url('/courts/panel') }}">
@@ -71,6 +76,11 @@
                             </a>
                         </li>
                         @endauth
+                        <li class="nav-item {{ Request::routeIs('about') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('/about') }}">
+                                Despre
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

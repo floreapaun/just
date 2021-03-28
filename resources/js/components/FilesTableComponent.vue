@@ -22,7 +22,7 @@
 	<td>{{ changeFormat(file.date_registered) }}</td>
 	<td><p v-for="crime in file.crimes">{{ crime.name }}</p></td>
 	<td>Penal</td>
-	<td>Apel</td>
+	<td>Fond</td>
       </tr>
     </table>
   </div>

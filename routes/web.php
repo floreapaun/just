@@ -29,6 +29,12 @@ Route::get('/courts', function () {
 Route::get('/files', function () {
     return view('files.index');
 })->name('files'); 
+Route::get('/revoked_files', function () {
+    return view('files.revoked');
+})->name('revoked_files'); 
+Route::get('/about', function () {
+    return view('about');
+})->name('about'); 
 
 
 Route::group(['middleware' => ['auth']], function() {
