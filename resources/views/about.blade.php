@@ -28,37 +28,44 @@
     <br>
     
     <div class="row">
-      <div class="col-lg-4"></div>
-      <div class="col-lg-4 mb-4">
+      <div class="col-lg-4 mb-4 offset-lg-4">
         <div class="card border-primary rounded-0">
           <div class="card-header p-0">
             <div class="bg-primary text-white text-center py-2">
-              <h3><i class="bi bi-house-door"></i>Contact</h3>
+              <h3><i class="bi bi-chat mx-2"></i>Contact</h3>
             </div>
           </div>
           <div class="card-body p-3">
-              <div class="form-group">
-                  <label>Adresa</label>
-                  <div class="input-group">
-                      <input type="text" class="form-control" value="Bucuresti, Romania" disabled>
-                  </div>
+            <div class="form-group">
+              <div class="input-group mb-2">
+                <label class="mx-2 my-auto">Adresa</label>
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="bi bi-house text-info"></i></div>
+                </div>
+                <input type="text" class="form-control" value="Bucuresti, Romania" disabled>
               </div>
-              <div class="form-group">
-                  <label>Email</label>
-                  <div class="input-group mb-2 mb-sm-0">
-                      <input type="text" class="form-control" value="administrator@justitie.portal" disabled>
-                  </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group mb-2">
+                <label class="mx-2 my-auto">Email</label>
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="bi bi-envelope text-info"></i></div>
+                </div>
+                <input type="text" class="form-control" value="administrator@justitie.portal" disabled>
               </div>
-              <div class="form-group">
-                  <label>Telefon</label>
-                  <div class="input-group mb-2 mb-sm-0">
-                      <input type="text" class="form-control" value="0727849563" disabled>
-                  </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group mb-2">
+                <label class="mx-2 my-auto">Telefon</label>
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="bi bi-telephone text-info"></i></div>
+                </div>
+                <input type="text" class="form-control" value="0727849563" disabled>
               </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-lg-4"></div>
     </div>
 
   </div>
