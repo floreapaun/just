@@ -1,9 +1,66 @@
 @extends('layouts.app')
 
 @section('content')
-  <div class="container">
-    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+  <div class="container text-center">
+    <br>
+    <h3>Tribunalul Specializat pentru Infractiuni de Coruptie</h3>
+    <br>
+    <table>
+      <tr>
+        <td class='bg-info bg-gradient' colspan='3'>Colegiu de conducere</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>Membru</td>
+        <td>Judecator X</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Membru</td>
+        <td>Judecator Y</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>Membru</td>
+        <td>Judecator Z</td>
+      </tr>
+    </table>
+    <br>
+    
+    <div class="row">
+      <div class="col-lg-4"></div>
+      <div class="col-lg-4 mb-4">
+        <div class="card border-primary rounded-0">
+          <div class="card-header p-0">
+            <div class="bg-primary text-white text-center py-2">
+              <h3><i class="bi bi-house-door"></i>Contact</h3>
+            </div>
+          </div>
+          <div class="card-body p-3">
+              <div class="form-group">
+                  <label>Adresa</label>
+                  <div class="input-group">
+                      <input type="text" class="form-control" value="Bucuresti, Romania" disabled>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label>Email</label>
+                  <div class="input-group mb-2 mb-sm-0">
+                      <input type="text" class="form-control" value="administrator@justitie.portal" disabled>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label>Telefon</label>
+                  <div class="input-group mb-2 mb-sm-0">
+                      <input type="text" class="form-control" value="0727849563" disabled>
+                  </div>
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4"></div>
+    </div>
+
   </div>
 @endsection
 

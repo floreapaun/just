@@ -59,12 +59,12 @@
                                 Sedinte
                             </a>
                         </li>
+                        @auth
                         <li class="nav-item {{ Request::routeIs('revoked_files') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ url('/revoked_files') }}">
                                 Apeluri sau contestatii
                             </a>
                         </li>
-                        @auth
                         <li class="nav-item {{ Request::routeIs('courts_panel') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ url('/courts/panel') }}">
                                 Complete
