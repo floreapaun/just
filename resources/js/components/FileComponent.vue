@@ -82,7 +82,7 @@
             </div>
             <div class="form-row">
               <div class="form-group col-md-2">
-                <label>Solutie</label>
+                <label>Tip solutie</label>
               </div>
               <div class="form-group col-md-5">
                 <input type="text" value="Amanare cauza" class="form-control" disabled>
@@ -90,7 +90,7 @@
             </div>
             <div class="form-row">
               <div class="form-group col-md-2">
-                <label>Tip solutie</label>
+                <label>Solutie</label>
               </div>
               <div class="form-group col-md-5">
                 <input type="text" v-model="trial.solution" class="form-control" disabled>
@@ -128,7 +128,7 @@
             </div>
             <div class="form-row">
               <div class="form-group col-md-2">
-                <label>Solutie</label>
+                <label>Tip solutie</label>
               </div>
               <div class="form-group col-md-5">
                 <input type="text" value="Hotarare" class="form-control" disabled>
@@ -136,7 +136,7 @@
             </div>
             <div class="form-row">
               <div class="form-group col-md-2">
-                <label>Tip solutie</label>
+                <label>Solutie</label>
               </div>
               <div class="form-group col-md-5">
                 <input type="text" v-model="trial.solution" class="form-control" disabled>
@@ -152,29 +152,31 @@
             </div>
             
             <hr>
-        
+       
             <h2>Cai atac</h2>
-            <div v-if="hasRevoke">
+
+            <div>
               <table>
-                <tr>
+                <tr v-if="file.revokes.length">
                   <th>Data declarare</th>
                   <th>Parte declaranta</th>
                   <th>Cale de atac</th>
                 </tr>
-                <tr>
-                  <td>{{ changeFormat(file.date_revoke) }}</td>
-                  <td><span>{{ file.revoke_parts }}</span></td>
-                  <td>{{ file.revoke_type }}</td>
+                <tr v-for="revoke in file.revokes">
+                  <td>{{ changeFormat(revoke.date) }}</td>
+                  <td><span>{{ revoke.parts }}</span></td>
+                  <td>{{ revoke.type }}</td>
                 </tr>
               </table>
             </div>
-            <div v-else>
+
+            <div class="revokeform">
               <div class="form-row">
                 <div class="form-group col-md-2">
                   <label>Data declarare</label>
                 </div>
                 <div class="form-group col-md-5">
-                  <datepicker-component v-model="revokeDate" :language='ro'>
+                  <datepicker-component v-model="revoke.date" :language='ro'>
                   </datepicker-component>
                 </div>
               </div>
@@ -207,7 +209,7 @@
                   <label>Tip</label>
                 </div>
                 <div class="form-group col-md-2">
-                  <select v-model="revokeType">
+                  <select v-model="revoke.type">
                     <option>Apel</option>
                     <option>Contestatie</option>
                   </select>
@@ -245,7 +247,7 @@
             <div v-if="propsIsAdmin">
               <div class="form-row">
                 <div class="form-group col-md-2">
-                  <label>Solutie</label>
+                  <label>Tip solutie</label>
                 </div>
                 <div class="form-group col-md-5">
                   <select v-model="updateType" @change="onChange(trial.court)">
@@ -274,14 +276,14 @@
                   </div>
                   <div class="form-group col-md-2">
                     <button :disabled="newCourtIsClicked" 
-                      @click="newCourt()" type="button" class="btn btn-secondary">Refuza</button>
+                      @click="newCourt()" type="button" class="btn btn-secondary">Recuzat</button>
                   </div>
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group col-md-2">
-                  <label>Tip solutie</label>
+                  <label>Solutie</label>
                 </div>
                 <div class="form-group col-md-5">
                   <input type="text" v-model="solution" class="form-control">
@@ -346,9 +348,10 @@ export default {
       solution: "",
       document: "",
       newTrialDate: new Date(),
-      hasRevoke: false,
-      revokeDate: new Date(),
-      revokeType: "",
+      revoke: {
+        date: new Date(),
+        type: "",
+      },
       nextCourt: {},
       newCourtIsClicked: false,
       crimesList: [],
@@ -362,14 +365,8 @@ export default {
       axios
         .post("/api/file/data", { id: this.propsFileId })
         .then((response) => {
-
           this.computeFileNumber(response.data[0].date_registered);
-
-          if (response.data[0].date_revoke) 
-            this.hasRevoke = true;
-
           this.file = response.data[0];
-
         })
         .catch((error) => {
           console.log(error);
@@ -424,10 +421,10 @@ export default {
     sendRevoke() {
     
       let data = {
-       "id": this.propsFileId,
-       "revoke_date": this.revokeDate,
-       "revoke_parts": this.getCheckedParts(),
-       "revoke_type": this.revokeType, 
+       "file_id": this.propsFileId,
+       "date": this.revoke.date,
+       "parts": this.getCheckedParts(),
+       "type": this.revoke.type, 
       }; 
       
       axios
@@ -490,7 +487,7 @@ export default {
 </script>
 
 <style>
-.parts > div, .trials > div {
+.parts > div, .trials > div, div.revokeform {
   margin: 20px 0;
   padding-bottom: 10px;
 }

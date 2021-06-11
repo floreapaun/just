@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFilesTable extends Migration
+class CreateRevokesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateFilesTable extends Migration
      */
     public function up()
     {
-        Schema::create('files', function (Blueprint $table) {
+        Schema::create('revokes', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->date('date_registered');
+            $table->bigInteger('file_id')->unsigned();
+            $table->foreign('file_id')->references('id')->on('files');
+            $table->date('date');
+            $table->string('parts');
+            $table->string('type');
         });
     }
 
@@ -28,6 +30,6 @@ class CreateFilesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('files');
+        Schema::dropIfExists('revokes');
     }
 }

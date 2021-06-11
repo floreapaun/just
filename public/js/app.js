@@ -2512,6 +2512,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ["propsFileId", "propsIsAdmin"],
@@ -2523,9 +2525,10 @@ __webpack_require__.r(__webpack_exports__);
       solution: "",
       document: "",
       newTrialDate: new Date(),
-      hasRevoke: false,
-      revokeDate: new Date(),
-      revokeType: "",
+      revoke: {
+        date: new Date(),
+        type: ""
+      },
       nextCourt: {},
       newCourtIsClicked: false,
       crimesList: [],
@@ -2542,7 +2545,6 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         _this.computeFileNumber(response.data[0].date_registered);
 
-        if (response.data[0].date_revoke) _this.hasRevoke = true;
         _this.file = response.data[0];
       })["catch"](function (error) {
         console.log(error);
@@ -2596,10 +2598,10 @@ __webpack_require__.r(__webpack_exports__);
       var _this4 = this;
 
       var data = {
-        "id": this.propsFileId,
-        "revoke_date": this.revokeDate,
-        "revoke_parts": this.getCheckedParts(),
-        "revoke_type": this.revokeType
+        "file_id": this.propsFileId,
+        "date": this.revoke.date,
+        "parts": this.getCheckedParts(),
+        "type": this.revoke.type
       };
       axios.post("/api/file/revoke", data).then(function (response) {
         _this4.getFileData();
@@ -9117,7 +9119,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.parts > div, .trials > div {\r\n  margin: 20px 0;\r\n  padding-bottom: 10px;\n}\n.parts > div:not(:last-child), .trials > div:not(:last-child) {\r\n  border-bottom: 1px solid rgb(206, 212, 218);\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.parts > div, .trials > div, div.revokeform {\r\n  margin: 20px 0;\r\n  padding-bottom: 10px;\n}\n.parts > div:not(:last-child), .trials > div:not(:last-child) {\r\n  border-bottom: 1px solid rgb(206, 212, 218);\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -42065,265 +42067,263 @@ var render = function() {
                   _vm._v(" "),
                   _c("h2", [_vm._v("Cai atac")]),
                   _vm._v(" "),
-                  _vm.hasRevoke
-                    ? _c("div", [
-                        _c("table", [
-                          _vm._m(13, true),
-                          _vm._v(" "),
-                          _c("tr", [
+                  _c("div", [
+                    _c(
+                      "table",
+                      [
+                        _vm.file.revokes.length
+                          ? _c("tr", [
+                              _c("th", [_vm._v("Data declarare")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Parte declaranta")]),
+                              _vm._v(" "),
+                              _c("th", [_vm._v("Cale de atac")])
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _vm._l(_vm.file.revokes, function(revoke) {
+                          return _c("tr", [
                             _c("td", [
-                              _vm._v(
-                                _vm._s(_vm.changeFormat(_vm.file.date_revoke))
-                              )
+                              _vm._v(_vm._s(_vm.changeFormat(revoke.date)))
                             ]),
                             _vm._v(" "),
                             _c("td", [
-                              _c("span", [
-                                _vm._v(_vm._s(_vm.file.revoke_parts))
-                              ])
+                              _c("span", [_vm._v(_vm._s(revoke.parts))])
                             ]),
                             _vm._v(" "),
-                            _c("td", [_vm._v(_vm._s(_vm.file.revoke_type))])
+                            _c("td", [_vm._v(_vm._s(revoke.type))])
                           ])
-                        ])
-                      ])
-                    : _c(
-                        "div",
-                        [
-                          _c("div", { staticClass: "form-row" }, [
-                            _vm._m(14, true),
-                            _vm._v(" "),
-                            _c(
-                              "div",
-                              { staticClass: "form-group col-md-5" },
-                              [
-                                _c("datepicker-component", {
-                                  attrs: { language: _vm.ro },
-                                  model: {
-                                    value: _vm.revokeDate,
-                                    callback: function($$v) {
-                                      _vm.revokeDate = $$v
-                                    },
-                                    expression: "revokeDate"
-                                  }
-                                })
+                        })
+                      ],
+                      2
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "revokeform" },
+                    [
+                      _c("div", { staticClass: "form-row" }, [
+                        _vm._m(13, true),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "form-group col-md-5" },
+                          [
+                            _c("datepicker-component", {
+                              attrs: { language: _vm.ro },
+                              model: {
+                                value: _vm.revoke.date,
+                                callback: function($$v) {
+                                  _vm.$set(_vm.revoke, "date", $$v)
+                                },
+                                expression: "revoke.date"
+                              }
+                            })
+                          ],
+                          1
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _vm._l(_vm.file.parts, function(part) {
+                        return _c("div", { staticClass: "form-row" }, [
+                          _vm._m(14, true),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group col-md-6" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: part.name,
+                                  expression: "part.name"
+                                }
                               ],
-                              1
-                            )
+                              staticClass: "form-control",
+                              attrs: { type: "text", disabled: "" },
+                              domProps: { value: part.name },
+                              on: {
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.$set(part, "name", $event.target.value)
+                                }
+                              }
+                            })
                           ]),
                           _vm._v(" "),
-                          _vm._l(_vm.file.parts, function(part) {
-                            return _c("div", { staticClass: "form-row" }, [
-                              _vm._m(15, true),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                { staticClass: "form-group col-md-6" },
-                                [
-                                  _c("input", {
-                                    directives: [
-                                      {
-                                        name: "model",
-                                        rawName: "v-model",
-                                        value: part.name,
-                                        expression: "part.name"
-                                      }
-                                    ],
-                                    staticClass: "form-control",
-                                    attrs: { type: "text", disabled: "" },
-                                    domProps: { value: part.name },
-                                    on: {
-                                      input: function($event) {
-                                        if ($event.target.composing) {
-                                          return
-                                        }
-                                        _vm.$set(
-                                          part,
-                                          "name",
-                                          $event.target.value
-                                        )
-                                      }
-                                    }
-                                  })
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                { staticClass: "form-group col-md-2" },
-                                [
-                                  _c("input", {
-                                    directives: [
-                                      {
-                                        name: "model",
-                                        rawName: "v-model",
-                                        value: _vm.checkedParts,
-                                        expression: "checkedParts"
-                                      }
-                                    ],
-                                    attrs: { type: "checkbox" },
-                                    domProps: {
-                                      value: part.name,
-                                      checked: Array.isArray(_vm.checkedParts)
-                                        ? _vm._i(_vm.checkedParts, part.name) >
-                                          -1
-                                        : _vm.checkedParts
-                                    },
-                                    on: {
-                                      change: function($event) {
-                                        var $$a = _vm.checkedParts,
-                                          $$el = $event.target,
-                                          $$c = $$el.checked ? true : false
-                                        if (Array.isArray($$a)) {
-                                          var $$v = part.name,
-                                            $$i = _vm._i($$a, $$v)
-                                          if ($$el.checked) {
-                                            $$i < 0 &&
-                                              (_vm.checkedParts = $$a.concat([
-                                                $$v
-                                              ]))
-                                          } else {
-                                            $$i > -1 &&
-                                              (_vm.checkedParts = $$a
-                                                .slice(0, $$i)
-                                                .concat($$a.slice($$i + 1)))
-                                          }
-                                        } else {
-                                          _vm.checkedParts = $$c
-                                        }
-                                      }
-                                    }
-                                  })
-                                ]
-                              )
-                            ])
-                          }),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "form-row" }, [
-                            _vm._m(16, true),
-                            _vm._v(" "),
-                            _vm._m(17, true),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "form-group col-md-2" }, [
-                              _c("input", {
-                                directives: [
-                                  {
-                                    name: "model",
-                                    rawName: "v-model",
-                                    value: _vm.checkedParts,
-                                    expression: "checkedParts"
-                                  }
-                                ],
-                                attrs: {
-                                  type: "checkbox",
-                                  value:
-                                    "Parchetul de pe langa ICCJ - Directia Nationala Anticoruptie"
-                                },
-                                domProps: {
-                                  checked: Array.isArray(_vm.checkedParts)
-                                    ? _vm._i(
-                                        _vm.checkedParts,
-                                        "Parchetul de pe langa ICCJ - Directia Nationala Anticoruptie"
-                                      ) > -1
-                                    : _vm.checkedParts
-                                },
-                                on: {
-                                  change: function($event) {
-                                    var $$a = _vm.checkedParts,
-                                      $$el = $event.target,
-                                      $$c = $$el.checked ? true : false
-                                    if (Array.isArray($$a)) {
-                                      var $$v =
-                                          "Parchetul de pe langa ICCJ - Directia Nationala Anticoruptie",
-                                        $$i = _vm._i($$a, $$v)
-                                      if ($$el.checked) {
-                                        $$i < 0 &&
-                                          (_vm.checkedParts = $$a.concat([$$v]))
-                                      } else {
-                                        $$i > -1 &&
-                                          (_vm.checkedParts = $$a
-                                            .slice(0, $$i)
-                                            .concat($$a.slice($$i + 1)))
-                                      }
+                          _c("div", { staticClass: "form-group col-md-2" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.checkedParts,
+                                  expression: "checkedParts"
+                                }
+                              ],
+                              attrs: { type: "checkbox" },
+                              domProps: {
+                                value: part.name,
+                                checked: Array.isArray(_vm.checkedParts)
+                                  ? _vm._i(_vm.checkedParts, part.name) > -1
+                                  : _vm.checkedParts
+                              },
+                              on: {
+                                change: function($event) {
+                                  var $$a = _vm.checkedParts,
+                                    $$el = $event.target,
+                                    $$c = $$el.checked ? true : false
+                                  if (Array.isArray($$a)) {
+                                    var $$v = part.name,
+                                      $$i = _vm._i($$a, $$v)
+                                    if ($$el.checked) {
+                                      $$i < 0 &&
+                                        (_vm.checkedParts = $$a.concat([$$v]))
                                     } else {
-                                      _vm.checkedParts = $$c
+                                      $$i > -1 &&
+                                        (_vm.checkedParts = $$a
+                                          .slice(0, $$i)
+                                          .concat($$a.slice($$i + 1)))
                                     }
+                                  } else {
+                                    _vm.checkedParts = $$c
                                   }
                                 }
-                              })
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "form-row" }, [
-                            _vm._m(18, true),
-                            _vm._v(" "),
-                            _c("div", { staticClass: "form-group col-md-2" }, [
-                              _c(
-                                "select",
-                                {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.revokeType,
-                                      expression: "revokeType"
-                                    }
-                                  ],
-                                  on: {
-                                    change: function($event) {
-                                      var $$selectedVal = Array.prototype.filter
-                                        .call($event.target.options, function(
-                                          o
-                                        ) {
-                                          return o.selected
-                                        })
-                                        .map(function(o) {
-                                          var val =
-                                            "_value" in o ? o._value : o.value
-                                          return val
-                                        })
-                                      _vm.revokeType = $event.target.multiple
-                                        ? $$selectedVal
-                                        : $$selectedVal[0]
-                                    }
-                                  }
-                                },
-                                [
-                                  _c("option", [_vm._v("Apel")]),
-                                  _vm._v(" "),
-                                  _c("option", [_vm._v("Contestatie")])
-                                ]
-                              )
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "form-row" }, [
-                            _c("div", { staticClass: "form-group col-md-2" }, [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "btn btn-secondary",
-                                  attrs: { type: "button" },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.sendRevoke()
-                                    }
-                                  }
-                                },
-                                [_vm._v("Trimite")]
-                              )
-                            ])
+                              }
+                            })
                           ])
-                        ],
-                        2
-                      )
+                        ])
+                      }),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-row" }, [
+                        _vm._m(15, true),
+                        _vm._v(" "),
+                        _vm._m(16, true),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group col-md-2" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.checkedParts,
+                                expression: "checkedParts"
+                              }
+                            ],
+                            attrs: {
+                              type: "checkbox",
+                              value:
+                                "Parchetul de pe langa ICCJ - Directia Nationala Anticoruptie"
+                            },
+                            domProps: {
+                              checked: Array.isArray(_vm.checkedParts)
+                                ? _vm._i(
+                                    _vm.checkedParts,
+                                    "Parchetul de pe langa ICCJ - Directia Nationala Anticoruptie"
+                                  ) > -1
+                                : _vm.checkedParts
+                            },
+                            on: {
+                              change: function($event) {
+                                var $$a = _vm.checkedParts,
+                                  $$el = $event.target,
+                                  $$c = $$el.checked ? true : false
+                                if (Array.isArray($$a)) {
+                                  var $$v =
+                                      "Parchetul de pe langa ICCJ - Directia Nationala Anticoruptie",
+                                    $$i = _vm._i($$a, $$v)
+                                  if ($$el.checked) {
+                                    $$i < 0 &&
+                                      (_vm.checkedParts = $$a.concat([$$v]))
+                                  } else {
+                                    $$i > -1 &&
+                                      (_vm.checkedParts = $$a
+                                        .slice(0, $$i)
+                                        .concat($$a.slice($$i + 1)))
+                                  }
+                                } else {
+                                  _vm.checkedParts = $$c
+                                }
+                              }
+                            }
+                          })
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-row" }, [
+                        _vm._m(17, true),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group col-md-2" }, [
+                          _c(
+                            "select",
+                            {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.revoke.type,
+                                  expression: "revoke.type"
+                                }
+                              ],
+                              on: {
+                                change: function($event) {
+                                  var $$selectedVal = Array.prototype.filter
+                                    .call($event.target.options, function(o) {
+                                      return o.selected
+                                    })
+                                    .map(function(o) {
+                                      var val =
+                                        "_value" in o ? o._value : o.value
+                                      return val
+                                    })
+                                  _vm.$set(
+                                    _vm.revoke,
+                                    "type",
+                                    $event.target.multiple
+                                      ? $$selectedVal
+                                      : $$selectedVal[0]
+                                  )
+                                }
+                              }
+                            },
+                            [
+                              _c("option", [_vm._v("Apel")]),
+                              _vm._v(" "),
+                              _c("option", [_vm._v("Contestatie")])
+                            ]
+                          )
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-row" }, [
+                        _c("div", { staticClass: "form-group col-md-2" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn btn-secondary",
+                              attrs: { type: "button" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.sendRevoke()
+                                }
+                              }
+                            },
+                            [_vm._v("Trimite")]
+                          )
+                        ])
+                      ])
+                    ],
+                    2
+                  )
                 ])
               : _vm._e(),
             _vm._v(" "),
             trial.type === "waiting" && _vm.timePassed(trial.date)
               ? _c("div", [
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(19, true),
+                    _vm._m(18, true),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -42345,7 +42345,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(20, true),
+                    _vm._m(19, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -42359,7 +42359,7 @@ var render = function() {
                   _vm.propsIsAdmin
                     ? _c("div", [
                         _c("div", { staticClass: "form-row" }, [
-                          _vm._m(21, true),
+                          _vm._m(20, true),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group col-md-5" }, [
                             _c(
@@ -42409,7 +42409,7 @@ var render = function() {
                         _vm.updateType === "Amana cauza"
                           ? _c("div", [
                               _c("div", { staticClass: "form-row" }, [
-                                _vm._m(22, true),
+                                _vm._m(21, true),
                                 _vm._v(" "),
                                 _c(
                                   "div",
@@ -42431,7 +42431,7 @@ var render = function() {
                               ]),
                               _vm._v(" "),
                               _c("div", { staticClass: "form-row" }, [
-                                _vm._m(23, true),
+                                _vm._m(22, true),
                                 _vm._v(" "),
                                 _c(
                                   "div",
@@ -42483,7 +42483,7 @@ var render = function() {
                                           }
                                         }
                                       },
-                                      [_vm._v("Refuza")]
+                                      [_vm._v("Recuzat")]
                                     )
                                   ]
                                 )
@@ -42492,7 +42492,7 @@ var render = function() {
                           : _vm._e(),
                         _vm._v(" "),
                         _c("div", { staticClass: "form-row" }, [
-                          _vm._m(24, true),
+                          _vm._m(23, true),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group col-md-5" }, [
                             _c("input", {
@@ -42520,7 +42520,7 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c("div", { staticClass: "form-row" }, [
-                          _vm._m(25, true),
+                          _vm._m(24, true),
                           _vm._v(" "),
                           _c("div", { staticClass: "form-group col-md-5" }, [
                             _c("input", {
@@ -42572,7 +42572,7 @@ var render = function() {
             trial.type === "waiting" && !_vm.timePassed(trial.date)
               ? _c("div", [
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(26, true),
+                    _vm._m(25, true),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -42594,7 +42594,7 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-row" }, [
-                    _vm._m(27, true),
+                    _vm._m(26, true),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group col-md-5" }, [
                       _c("input", {
@@ -42680,7 +42680,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-row" }, [
       _c("div", { staticClass: "form-group col-md-2" }, [
-        _c("label", [_vm._v("Solutie")])
+        _c("label", [_vm._v("Tip solutie")])
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "form-group col-md-5" }, [
@@ -42696,7 +42696,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group col-md-2" }, [
-      _c("label", [_vm._v("Tip solutie")])
+      _c("label", [_vm._v("Solutie")])
     ])
   },
   function() {
@@ -42729,7 +42729,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-row" }, [
       _c("div", { staticClass: "form-group col-md-2" }, [
-        _c("label", [_vm._v("Solutie")])
+        _c("label", [_vm._v("Tip solutie")])
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "form-group col-md-5" }, [
@@ -42745,7 +42745,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group col-md-2" }, [
-      _c("label", [_vm._v("Tip solutie")])
+      _c("label", [_vm._v("Solutie")])
     ])
   },
   function() {
@@ -42754,18 +42754,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group col-md-2" }, [
       _c("label", [_vm._v("Document")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("tr", [
-      _c("th", [_vm._v("Data declarare")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Parte declaranta")]),
-      _vm._v(" "),
-      _c("th", [_vm._v("Cale de atac")])
     ])
   },
   function() {
@@ -42836,7 +42824,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group col-md-2" }, [
-      _c("label", [_vm._v("Solutie")])
+      _c("label", [_vm._v("Tip solutie")])
     ])
   },
   function() {
@@ -42860,7 +42848,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "form-group col-md-2" }, [
-      _c("label", [_vm._v("Tip solutie")])
+      _c("label", [_vm._v("Solutie")])
     ])
   },
   function() {

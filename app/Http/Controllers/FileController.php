@@ -7,6 +7,7 @@ use App\Models\File;
 use App\Models\Part;
 use App\Models\Trial;
 use App\Models\Crime;
+use App\Models\Revoke;
 use Illuminate\Support\Facades\Auth;
 
 class FileController extends Controller
@@ -52,13 +53,13 @@ class FileController extends Controller
     public function revoked_search(Request $request) 
     {
         if ($request->term === "")
-          return File::whereNotNull('date_revoke')->with('crimes')->get();
+          return File::whereHas('revokes')->with('crimes')->get();
 
         //search by number
         $pieces_term = explode("/", $request->term);
         if (count($pieces_term) === 3) 
         {
-            $file = File::whereNotNull('date_revoke')->where('id', $pieces_term[0])->with('crimes')->get();
+            $file = File::whereHas('revokes')->where('id', $pieces_term[0])->with('crimes')->get();
             if (count($file)) 
             {
             $date_pieces = explode("-", $file[0]->date_registered);
@@ -70,14 +71,14 @@ class FileController extends Controller
         //search by part name
         $files = File::whereHas('parts', function ($query) use($request) {
                  return $query->where('name', 'like', '%' . $request->term . '%');
-             })->whereNotNull('date_revoke')->with('crimes')->get();
+             })->whereHas('revokes')->with('crimes')->get();
         if (count($files))
             return $files;
 
         //search by crime 
         return File::whereHas('crimes', function ($query) use($request) {
             return $query->where('name', 'like', '%' . $request->term . '%');
-        })->whereNotNull('date_revoke')->with('crimes')->get();
+        })->whereHas('revokes')->with('crimes')->get();
 	
     }  
 
@@ -89,17 +90,19 @@ class FileController extends Controller
 
     public function revoke(Request $request)
     {
-       return File::where('id', $request->id)
-           ->update([
-               'date_revoke' => date('Y-m-d', strtotime($request->revoke_date)),
-               'revoke_parts' => $request->revoke_parts,
-               'revoke_type' => $request->revoke_type,
-           ]);
+        $revoke = new Revoke;
+        $revoke->file_id = $request->file_id;
+        $revoke->date = date('Y-m-d', strtotime($request->date));
+        $revoke->parts = $request->parts;
+        $revoke->type = $request->type;
+        $revoke->save();
+
+        return $revoke;
     }
 
     public function revoked_index(Request $request)
     {
-       return File::orderBy('date_registered', 'DESC')->whereNotNull('date_revoke')->with('crimes')->get();
+       return File::orderBy('date_registered', 'DESC')->whereHas('revokes')->with('crimes')->get();
     }
 
     /**
@@ -114,7 +117,7 @@ class FileController extends Controller
 
     public function data(Request $request)
     {
-       return File::where('id', $request->id)->with('parts', 'crimes', 'trials.court')->get();
+       return File::where('id', $request->id)->with('parts', 'crimes', 'trials.court', 'revokes')->get();
     }
 
     /**

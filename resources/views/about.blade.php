@@ -11,7 +11,7 @@
       </tr>
       <tr>
         <td>1</td>
-        <td>Membru</td>
+        <td>Presedinte</td>
         <td>Judecator X</td>
       </tr>
       <tr>

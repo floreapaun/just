@@ -27,6 +27,11 @@ class File extends Model
         return $this->hasMany(Part::class);
     }
 
+    public function revokes()
+    {
+        return $this->hasMany(Revoke::class);
+    }
+
     public function trials()
     {
         return $this->hasMany(Trial::class);
