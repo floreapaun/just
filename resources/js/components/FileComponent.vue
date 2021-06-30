@@ -170,7 +170,7 @@
               </table>
             </div>
 
-            <div class="revokeform">
+            <div v-if="propsIsAdmin" class="revokeform">
               <div class="form-row">
                 <div class="form-group col-md-2">
                   <label>Data declarare</label>
