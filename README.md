@@ -3,9 +3,9 @@
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://i.ibb.co/vxJCVBM/sb89a5opxft3c3efzd4c.webp" width="400"></a></p>
 
-## How to install and run
+## How to install and run locally
 
-1. Clone the project (e.g. *git clone https://github.com/serj99/just.git*)
+1. Clone the project (e.g. *git clone https://github.com/serj99/just.git*) and go to /backend directory
 2. Install PHP packages with *composer install*
 3. Install NodeJS packages with *npm install*
 4. Build VueJS frontend with *npm run production*
@@ -14,6 +14,12 @@
 7. Run migrations and seed the database with *php artisan migrate --seed*
 8. Generate new key with *php artisan key:generate*
 9. Open the server by *php artisan serve* 
+
+
+## How to install and run inside Docker container
+1. Clone the project (e.g. *git clone https://github.com/serj99/just.git*) 
+2. Run *make init* inside just directory
+3. Check the application on browser at http://localhost
 
 ### Adding a file
 <p align="center"><a href="#" target="_blank"><img src="https://i.ibb.co/84YkVd5/1.png"></a></p>
