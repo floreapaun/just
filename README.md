@@ -5,7 +5,7 @@
 
 ## How to install and run locally
 
-1. Clone the project (e.g. *git clone https://github.com/serj99/just.git*) and go to /backend directory
+1. Clone the project (e.g. *git clone https://github.com/floreapaun/just.git*) and go to /backend directory
 2. Install PHP packages with *composer install*
 3. Install NodeJS packages with *npm install*
 4. Build VueJS frontend with *npm run production*
@@ -17,15 +17,8 @@
 
 
 ## How to install and run inside Docker container
-1. Clone the project (e.g. *git clone https://github.com/serj99/just.git*) 
+1. Clone the project (e.g. *git clone https://github.com/floreapaun/just.git*) 
 2. Run *make init* inside just directory
 3. Check the application on browser at http://localhost
 
-### Adding a file
-<p align="center"><a href="#" target="_blank"><img src="https://i.ibb.co/84YkVd5/1.png"></a></p>
 
-### Disposing a court
-<p align="center"><a href="#" target="_blank"><img src="https://i.ibb.co/1z8MTsD/2.png"></a></p>
-
-### Listing all files
-<p align="center"><a href="#" target="_blank"><img src="https://i.ibb.co/Z10Thjp/3.png"></a></p>
