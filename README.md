@@ -3,6 +3,7 @@
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://i.ibb.co/vxJCVBM/sb89a5opxft3c3efzd4c.webp" width="400"></a></p>
 
+
 ## How to install and run locally
 
 1. Clone the project (e.g. *git clone https://github.com/floreapaun/just.git*) and go to /backend directory
@@ -21,4 +22,6 @@
 2. Run *make init* inside just directory
 3. Check the application on browser at http://localhost
 
+## Demo 
+https://user-images.githubusercontent.com/1117393/211309365-db5e99f1-7f8c-4cd2-b58a-fd528124799f.mp4
 
